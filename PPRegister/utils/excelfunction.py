@@ -15,6 +15,7 @@ os.environ["PATH"] += os.pathsep + 'C:\\Program Files (x86)\\Graphviz\\bin'
 from graphviz import Digraph
 from openpyxl.styles import Alignment
 from PPRegister.models import FormatoUno, FormatoDos, FormatoTres, FormatoCuatro, Formato9,UserProfile, Formato6, Municipios, APED, Directriz, Vertiente, ObjetivoEstrategico, ObjetivoEspecifico, LineaAccion, FormatoCatorce, FormatoDieciseis, FormatoDoce, FormatoQuince, FormatoTrece, LineaBase
+from PPRegister.models import RegistroFormatoDieciciete,FuenteFinanciamiento, FichaIndicador, Variable, FormatoQuince
 from openpyxl.utils import get_column_letter
 ##### arboles #####
 def wrap_text(text, words_per_line):
@@ -315,8 +316,6 @@ def llenar_f2(ws, id_pp):
         formato_celda_cuerpo(ws.cell(row=i, column=10, value=reg.interdependencia),11)
         formato_celda_cuerpo(ws.cell(row=i, column=11, value=reg.descripcion_interdependencia),11)
 
-
-
 def llenar_f3(ws, id_pp):
     registros = FormatoTres.objects.filter(id_pp=id_pp)
     fila_inicio = 5
@@ -405,8 +404,11 @@ def llenar_f6(ws, id_pp):
         formato_celda_cuerpo(ws.cell(row=i, column=11, value=reg.porcentaje1),11) 
         formato_celda_cuerpo(ws.cell(row=i, column=12, value=reg.porcentaje2),11) 
 
+def Llenar_f7(ws, id_pp, tittle, lista, nombre):
+    crear_encabezado(ws, tittle, lista[1], nombrePP=nombre, fill=True)
+    ws.column_dimensions['A'].width = 25
+    ws.column_dimensions['B'].width = 100
 
-def Llenar_f7(ws, id_pp):
     row = 4
     salto = 2
 
@@ -414,14 +416,22 @@ def Llenar_f7(ws, id_pp):
         APED.objects
         .filter(id_pp_id=id_pp)
         .prefetch_related(
-            "directriz_set__vertiente_set__objetivoestrategico_set__objetivoespecifico_set"
+              'directriz_set__vertiente_set__objetivoestrategico_set__objetivoespecifico_set'
         )
     )
 
+    contador = 1  # Contador de Alineaciones
+
     for aped in apeds:
+        # Pintar encabezado de la sección
+        ws.row_dimensions[row - 1].height = 45  # row - 1 porque se pinta arriba
+        ws.cell(row=row - 1, column=2, value=f'Alineación {contador}')
+        formato_encabezado_tablas(ws, row - 1, lista[1], 12, 'd')
+        contador += 1
+
         for directriz in aped.directriz_set.all():
             for vertiente in directriz.vertiente_set.all():
-                # Directriz y Vertiente (sin merge, siempre simples)
+                # Directriz y Vertiente
                 celda = ws.cell(row=row, column=1, value="Directriz")
                 formato_celda_cuerpo(celda, 10)
                 celda = ws.cell(row=row, column=2, value=directriz.directriz)
@@ -434,7 +444,7 @@ def Llenar_f7(ws, id_pp):
                 formato_celda_cuerpo(celda, 10)
                 row += 1
 
-                # Objetivos estratégicos (sin merge, título en cada fila)
+                # Objetivos estratégicos
                 for objetivo_estrategico in vertiente.objetivoestrategico_set.all():
                     celda = ws.cell(row=row, column=1, value="Objetivo estratégico")
                     formato_celda_cuerpo(celda, 10)
@@ -442,7 +452,7 @@ def Llenar_f7(ws, id_pp):
                     formato_celda_cuerpo(celda, 10)
                     row += 1
 
-                # Objetivos específicos: agrupar con merge vertical
+                # Objetivos específicos
                 objetivos_especificos = []
                 objetivo_especifico_ids = set()
 
@@ -453,22 +463,21 @@ def Llenar_f7(ws, id_pp):
                             objetivo_especifico_ids.add(objetivo_especifico.id_objetivo_especifico)
 
                 if objetivos_especificos:
-                    start_row = row  # fila donde empieza el grupo
+                    start_row = row
 
                     for oesp in objetivos_especificos:
                         celda = ws.cell(row=row, column=2, value=oesp.objetivo_especifico)
                         formato_celda_cuerpo(celda, 10)
                         row += 1
 
-                    end_row = row - 1  # fila donde termina el grupo
+                    end_row = row - 1
 
-                    # Merge vertical en la columna A para "Objetivo específico"
                     if start_row != end_row:
                         ws.merge_cells(start_row=start_row, start_column=1, end_row=end_row, end_column=1)
                     celda_merge = ws.cell(row=start_row, column=1, value="Objetivo específico")
                     formato_celda_cuerpo(celda_merge, 10)
 
-                # Líneas de acción: agrupamos con merge vertical igual
+                # Líneas de acción
                 if objetivos_especificos:
                     lineas_accion = (
                         LineaAccion.objects
@@ -495,9 +504,10 @@ def Llenar_f7(ws, id_pp):
                         if start_row != end_row:
                             ws.merge_cells(start_row=start_row, start_column=1, end_row=end_row, end_column=1)
                         celda_merge = ws.cell(row=start_row, column=1, value="Línea de acción")
-                        formato_celda_cuerpo(celda_merge, 10)
+                        for r in range(start_row, end_row + 1):
+                            formato_celda_cuerpo(ws.cell(row=r, column=1), 10)
 
-                row += salto
+        row += salto
 
 def Llenar_f8(ws, list):
     start_row = 4  # Assuming row 3 is header, so data starts at row 4
@@ -646,6 +656,28 @@ def llenar_f13(ws, id_pp):
         formato_celda_cuerpo(ws.cell(row=i, column=3, value=reg.periodicidad),11)
         formato_celda_cuerpo(ws.cell(row=i, column=4, value=reg.responsable_integracion),11)
 
+def llenar_f12(ws, id_pp):
+    registros = FormatoDoce.objects.filter(id_pp=id_pp)
+    fila_inicio = 4
+    if not registros:
+        return  
+    for i, reg in enumerate(registros, start=fila_inicio):
+        varcita= reg.variable.id
+        # variable = models.ForeignKey(Variable, on_delete=models.CASCADE, related_name='formatodoce')
+        #lineabase = LineaBase.objects.get(variable_id = varcita)
+    
+        Variable_model = Variable.objects.get(id=varcita)
+        ficha = Variable_model.ficha 
+
+        formato_celda_cuerpo(ws.cell(row=i, column=1, value= ficha.nombre_indicador),11)
+        formato_celda_cuerpo(ws.cell(row=i, column=2, value=Variable_model.nombre),11)
+        formato_celda_cuerpo(ws.cell(row=i, column=3, value=reg.registro),11)
+        formato_celda_cuerpo(ws.cell(row=i, column=4, value=reg.desagregacion),11)
+        formato_celda_cuerpo(ws.cell(row=i, column=5, value=reg.programa),11)
+        formato_celda_cuerpo(ws.cell(row=i, column=6, value=reg.instrumentos),11)
+        formato_celda_cuerpo(ws.cell(row=i, column=7, value=reg.responsable),11)
+        formato_celda_cuerpo(ws.cell(row=i, column=8, value=reg.periodicidad),11)
+        
 def llenar_f14(ws, id_pp):
     registros = FormatoCatorce.objects.filter(id_pp=id_pp)
     print('registros:   ')
@@ -654,26 +686,57 @@ def llenar_f14(ws, id_pp):
     if not registros:
         return
     for i, reg in enumerate(registros, start=fila_inicio):
+        print(f"reg.fichas:{reg.ficha}")
         if str(reg.ficha).__contains__('Propósito'):
             val = 'Propósito'
         else:
-            val = ''
-        formato_celda_cuerpo(ws.cell(row=i, column=1, value= val),11)   
-        
-        formato_celda_cuerpo(ws.cell(row=i, column=2, value= str(reg.ficha)),11)      
-        #print("OBJETO:      ", reg.ficha)
-        #print(type(reg.ficha))
-        #print("Error 2:     ", reg.variable.id)
+            val = 'Componente'
         varcita= reg.variable.id
+        var = Variable.objects.get(id=varcita)
         lineabase = LineaBase.objects.get(variable_id = varcita)
-        #print("Error 2:     ",lineabase.resultado_estimado)
+        total = reg.meta_2025+reg.meta_2026+reg.meta_2027+reg.meta_2028+reg.meta_2029+reg.meta_2030
+
+        formato_celda_cuerpo(ws.cell(row=i, column=1, value= val),11)   
+        formato_celda_cuerpo(ws.cell(row=i, column=2, value= str(reg.ficha)),11)      
         formato_celda_cuerpo(ws.cell(row=i, column=3, value=str(lineabase.resultado_estimado)),11) 
         formato_celda_cuerpo(ws.cell(row=i, column=4, value=reg.meta_2025),11)  # <-- aquí cambio
         formato_celda_cuerpo(ws.cell(row=i, column=5, value=reg.meta_2026),11)           
-        formato_celda_cuerpo(ws.cell(row=i, column=6, value=reg.meta_2028),11)     
-        formato_celda_cuerpo(ws.cell(row=i, column=7, value=reg.meta_2029),11) 
-        formato_celda_cuerpo(ws.cell(row=i, column=8, value=reg.meta_2030),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=6, value=reg.meta_2027),11)     
+        formato_celda_cuerpo(ws.cell(row=i, column=7, value=reg.meta_2028),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=8, value=reg.meta_2029),11)  
+        formato_celda_cuerpo(ws.cell(row=i, column=9, value=reg.meta_2030),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=10, value=var.medio_verificacion),11) 
 
+def llenar_f15(ws, id_pp):
+    registros = FormatoQuince.objects.filter(id_pp=id_pp)
+    print(registros)
+    fila_inicio = 5
+    if not registros:
+        return
+    for i, reg in enumerate(registros, start=fila_inicio):
+        formato_celda_cuerpo(ws.cell(row=i, column=1, value=reg.concepto),11)      
+        formato_celda_cuerpo(ws.cell(row=i, column=2, value=reg.total),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=3, value=reg.anio_2025),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=4, value=reg.anio_2026),11)           
+        formato_celda_cuerpo(ws.cell(row=i, column=5, value=reg.anio_2027),11)     
+        formato_celda_cuerpo(ws.cell(row=i, column=6, value=reg.anio_2028),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=7, value=reg.anio_2029),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=8, value=reg.anio_2030),11) 
+
+def llenar_f17(ws, id_pp):
+    registros = RegistroFormatoDieciciete.objects.filter(id_pp=id_pp)
+    fila_inicio = 4
+    if not registros:
+        return
+    for i, reg in enumerate(registros, start=fila_inicio):
+        ff = FuenteFinanciamiento.objects.get(id_ff=reg.id_ff.id_ff)
+        formato_celda_cuerpo(ws.cell(row=i, column=1, value=ff.nombre),11)      
+        formato_celda_cuerpo(ws.cell(row=i, column=2, value=reg.presupuesto_2025),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=3, value=reg.presupuesto_2026),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=4, value=reg.presupuesto_2027),11)           
+        formato_celda_cuerpo(ws.cell(row=i, column=5, value=reg.presupuesto_2028),11)     
+        formato_celda_cuerpo(ws.cell(row=i, column=6, value=reg.presupuesto_2029),11) 
+        formato_celda_cuerpo(ws.cell(row=i, column=7, value=reg.presupuesto_2030),11) 
 
 def llenar_ficha_en_hoja(ws, ficha):
     """

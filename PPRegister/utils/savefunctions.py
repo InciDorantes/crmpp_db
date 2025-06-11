@@ -1095,22 +1095,22 @@ def guardarFormatoDieciseis(data, id_pp):
             Subformato16.objects.filter(registro_id__in=formato_ids).delete()
             FormatoDieciseis.objects.filter(id_registro__in=formato_ids).delete()
 
-            # 2. Procesar nuevos datos
-            for comp_data in data['data']:
-                id_componente = comp_data['idComponente']
-                objetivo = comp_data['objetivo']
-                metas = comp_data['metas']
-                presupuestos = comp_data['presupuestos']
+            # Procesar nuevos datos
+            for comp_data in data:
+                id_componente = comp_data.get('idComponente')
+                objetivo = comp_data.get('objetivo', '')
+                metas = comp_data.get('metas', {})
+                presupuestos = comp_data.get('presupuestos', [])
 
                 try:
                     componente = ComponenteMir.objects.get(id_componente=id_componente, id_pp=id_pp_obj)
                 except ComponenteMir.DoesNotExist:
                     continue  # Saltar si no se encuentra el componente
 
-                # 3. Crear FormatoDieciseis
+                # Crear FormatoDieciseis
                 formato16 = FormatoDieciseis.objects.create(
                     componente=componente,
-                    meta_medianoplazo=metas.get('2025', ''),  # O ajústalo si tienes un campo distinto para mediano plazo
+                    meta_medianoplazo=metas.get('2025', ''),
                     meta_2025=metas.get('2025', ''),
                     meta_2026=metas.get('2026', ''),
                     meta_2027=metas.get('2027', ''),
@@ -1119,23 +1119,29 @@ def guardarFormatoDieciseis(data, id_pp):
                     meta_2030=metas.get('2030', '')
                 )
 
-                # 4. Agrupar presupuestos por COG
-                # Crear diccionario: { '1000': {2025: 0, ..., 2030: 0}, ... }
+                # Agrupar presupuestos por COG
                 cog_presupuestos = {}
                 for item in presupuestos:
-                    cog = str(item['cog'])
-                    anio = int(item['anio'])
-                    valor = int(item['valor']) if item['valor'] else 0
+                    try:
+                        cog = int(item.get('cog', 0))
+                        anio = int(item.get('anio', 0))
+                        valor = int(item.get('valor') or 0)
+                    except (ValueError, TypeError):
+                        continue  # Saltar si los datos están mal formateados
+
+                    if cog <= 0 or anio not in range(2025, 2031):
+                        continue  # Validación básica
 
                     if cog not in cog_presupuestos:
-                        cog_presupuestos[cog] = {2025: 0, 2026: 0, 2027: 0, 2028: 0, 2029: 0, 2030: 0}
+                        cog_presupuestos[cog] = {a: 0 for a in range(2025, 2031)}
 
                     cog_presupuestos[cog][anio] = valor
 
-                # 5. Crear un Subformato16 por COG
+                # Crear un Subformato16 por COG
                 for cog, valores in cog_presupuestos.items():
                     Subformato16.objects.create(
                         registro=formato16,
+                        cog=cog,
                         presupuesto_2025=valores.get(2025, 0),
                         presupuesto_2026=valores.get(2026, 0),
                         presupuesto_2027=valores.get(2027, 0),
@@ -1143,10 +1149,12 @@ def guardarFormatoDieciseis(data, id_pp):
                         presupuesto_2029=valores.get(2029, 0),
                         presupuesto_2030=valores.get(2030, 0),
                     )
+
         return JsonResponse({'status': 'ok', 'message': 'Formato 16 guardado correctamente.'})
 
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': f"Error del back: {str(e)}"})
+
              
 def guardarFormatoDieciciete(data, id_pp):
     try:

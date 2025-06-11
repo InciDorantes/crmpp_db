@@ -828,16 +828,17 @@ def estructura_formatoCatorce_envio(id):
             output_field=IntegerField()
         )
     ).order_by('orden_tipo', 'nombre_indicador')
+    print(f"fichas:{fichas}")
 
     tabla = []
 
     for ficha in fichas:
+        fichaid = ficha.id
         variables = list(ficha.variables.all()[:2])  # Máximo 2 variables
         if not variables:
             continue  # Si no hay variables, salta
 
         variable = variables[0] 
-        print(f"f14var:{variable}") # Asumimos que es la principal
         resultado = (
             variable.linea_base.resultado_estimado
             if hasattr(variable, 'linea_base') and variable.linea_base and variable.linea_base.resultado_estimado is not None
@@ -871,16 +872,15 @@ def estructura_formatoCatorce_envio(id):
                 '2029': 0,
                 '2030': 0,
             }
-
+        print(fichaid)
         tabla.append({
-            'fichaId': ficha.id,
+            'fichaId': fichaid,
             'tipo': ficha.tipo_ficha or "Sin tipo",
             'indicador': ficha.nombre_indicador or "Sin nombre",
             'resultado': resultado,
             'medios': medios_concatenados,
             'metas': metas
         })
-
     return tabla
 
 def generar_estructura_f16(id_pp):

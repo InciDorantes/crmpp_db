@@ -40,6 +40,7 @@ from .utils.excelfunction import (
     llenar_f2,
     llenar_f4,
     llenar_f6,
+    Llenar_f7,
     llenar_f9,
     llenar_f10,
     llenar_f13,
@@ -47,7 +48,10 @@ from .utils.excelfunction import (
     llenar_ficha_en_hoja,
     merge_columns_flexible,
     merge_dos_filas,
-    merge_filas
+    merge_filas,
+    llenar_f17,
+    llenar_f15,
+    llenar_f12
 )
 
 from .utils.structurefuncions import (
@@ -421,7 +425,8 @@ def registro(request, id_pp):
                         return  guardarFormatoQuince(datos, pp.id_pp)
                     
                     elif action =='guardar_formato_dieciseis':
-                        return guardarFormatoDieciseis(data, pp.id_pp)
+                        datos =data.get('data', [])
+                        return guardarFormatoDieciseis(datos, pp.id_pp)
                     
                     elif action =='guardar_formato_dieciciete':
                         datos =data.get('data', [])
@@ -676,7 +681,7 @@ def view_excel(id_pp):
                 'Formato 12': ['. Fuentes de Información', 8], 
                 'Formato 13': ['. Informes de desempeño', 4],
                 'Formato 14': ['. Marco de resultados en el mediano plazo', 10], 
-                'Formato 15': ['. Programación de la atención a la población objetivo en el mediano plazo', 7],
+                'Formato 15': ['. Programación de la atención a la población objetivo en el mediano plazo', 8],
                 'Formato 16': ['. Presupuesto por Componente', 12],
                 'Formato 17': ['. Fuentes de Financiamiento', 6]
                 }
@@ -840,7 +845,7 @@ def view_excel(id_pp):
            
                 #if test_formato7:
                 #### Llenar formato 7
-                Llenar_f7(ws, id)     
+                Llenar_f7(ws, id, tittle, lista, nombre)      
             elif formato =='Formato 8':
                 #### dar formato a la hoja formato 8
                 crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
@@ -1075,9 +1080,9 @@ def generar_excel(request, id_pp):
                 'Formato 12': ['. Fuentes de Información', 8], 
                 'Formato 13': ['. Informes de desempeño', 4],
                 'Formato 14': ['. Marco de resultados en el mediano plazo', 10], 
-                'Formato 15': ['. Programación de la atención a la población objetivo en el mediano plazo', 7],
+                'Formato 15': ['. Programación de la atención a la población objetivo en el mediano plazo', 8],
                 'Formato 16': ['. Presupuesto por Componente', 12],
-                'Formato 17': ['. Fuentes de Financiamiento', 6]
+                'Formato 17': ['. Fuentes de Financiamiento', 7]
                 }
 
     for formato, lista in titulos_y_columnas.items():
@@ -1252,15 +1257,7 @@ def generar_excel(request, id_pp):
                 ##### -------- 
             elif formato =='Formato 7':
                 #### dar formato a la hoja formato 7
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True, pintar_programa=False)
-                ws.column_dimensions['A'].width = 25
-                ws.column_dimensions['B'].width = 50
-                ws.row_dimensions[3].height = 45
-                ws.cell(row=3, column=2, value='Programa Presupuestario: ' + str(id))
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
-                #if test_formato7:
-                #### Llenar formato 7
-                Llenar_f7(ws, id)      
+                Llenar_f7(ws, id, tittle, lista, nombre)    
             elif formato =='Formato 8':
                 #### dar formato a la hoja formato 8
                 crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
@@ -1326,7 +1323,7 @@ def generar_excel(request, id_pp):
                 if test_formato10:
                     llenar_f10(ws, test_formato10)
             elif formato == 'Formato 12':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
                 nombre_cols = ['Nombre del Indicador', 'Descripción de la variable', 'Registro Administrativo',
                                     'Desagregación por sexo', 'Instrumento de recolección de la información',
                                     '¿En qué programa informático/software tiene o tendrá su base de datos?',
@@ -1340,8 +1337,9 @@ def generar_excel(request, id_pp):
                         ws.column_dimensions['A'].width = 38
                     else: 
                         ws.column_dimensions[chr(num+64)].width = 20
+                llenar_f12(ws, id)
             elif formato == 'Formato 13':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
                 nombre_cols = ['Nombre del reporte', 'Descripción general de la información reportada', 'Periodicidad',
                                     'Responsable de la integración']
                 for i, col in enumerate(nombre_cols):
@@ -1354,7 +1352,7 @@ def generar_excel(request, id_pp):
                 llenar_f13(ws, id)
                 ####-----
             elif formato == 'Formato 14':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
                 nombre_cols0 = ['Marco de Resultados de mediano plazo', '', '','','','','','','','']
                 for i, col in enumerate(nombre_cols0):
                     ws.cell(row = 3, column = i+1, value= col)
@@ -1365,7 +1363,7 @@ def generar_excel(request, id_pp):
                 nombre_cols2 = ['','Indicadores','Línea base','Metas por año','','','','','','']
                 for i, col in enumerate(nombre_cols2):
                     ws.cell(row = 5, column = i+1, value= col)
-                nombre_cols3 = ['','','',2025,2026,2027,2028,2029,'Total','']
+                nombre_cols3 = ['','','',2025,2026,2027,2028,2029,2030,'']
                 for i, col in enumerate(nombre_cols3):
                     ws.cell(row = 6, column = i+1, value= col)
                 merge_dos_filas(ws,4, lista[1])
@@ -1383,13 +1381,13 @@ def generar_excel(request, id_pp):
                 ws.column_dimensions['J'].width = 16
                 llenar_f14(ws, id_pp)
             elif formato == 'Formato 15':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
                 formato_encabezado_tablas(ws, 3, lista[1], 12, 'r')
                 formato_encabezado_tablas(ws, 3, lista[1], 12, 'r')
-                nombre_cols = ['Concepto', 'Total de la población objetivo', 'Población programada a atender','','','','']
+                nombre_cols = ['Concepto', 'Total de la población objetivo', 'Población programada a atender','','','','','','']
                 for i, col in enumerate(nombre_cols):
                     cell = ws.cell(row = 3, column = i+1, value= col) 
-                nombre_cols2 = ['', '', 2025,2026,2027,2028,2029]
+                nombre_cols2 = ['', '', 2025,2026,2027,2028,2029,2030]
                 for i, col in enumerate(nombre_cols2):
                     cell = ws.cell(row = 4, column = i+1, value= col)
                 formato_encabezado_tablas(ws, 3, lista[1], 12,'r')
@@ -1404,11 +1402,11 @@ def generar_excel(request, id_pp):
                         ws.column_dimensions['B'].width = 32 
                     else: 
                         ws.column_dimensions[chr(num+64)].width = 11
+                llenar_f15(ws, id)
                 ####----- llenado
-                llenar_f14(ws, id)
                 ####-----
             elif formato == 'Formato 16':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill=False)
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill=True)
                 nombre_cols = ['Componente/ capítulo','Meta de mediano plazo del componente',2025, 'Presupuesto',2026, 'Presupuesto',
                                 2027, 'Presupuesto',2028, 'Presupuesto',2029, 'Presupuesto']
                 for i, col in enumerate(nombre_cols):
@@ -1422,8 +1420,8 @@ def generar_excel(request, id_pp):
                     else:
                         ws.column_dimensions[chr(num+64)].width = 16 
             else:
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
-                nombre_cols = ['Fuentes de financiamiento',2025, 2026, 2027, 2028, 2029]
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Fuentes de financiamiento',2025, 2026, 2027, 2028, 2029, 2030]
                 for i, col in enumerate(nombre_cols):
                     ws.cell(row = 3, column = i+1, value= col)
                 formato_encabezado_tablas(ws, 3, lista[1], 10, 'd')
@@ -1432,6 +1430,7 @@ def generar_excel(request, id_pp):
                         ws.column_dimensions['A'].width = 40
                     else:
                         ws.column_dimensions['B'].width = 10
+                llenar_f17(ws, id)
     if 'Sheet' in wb.sheetnames:
         del wb['Sheet']
 

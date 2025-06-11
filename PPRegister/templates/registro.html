@@ -1257,17 +1257,17 @@ const appStateAct ={
         </thead>
         <tbody>
             {% for fila in data_formato14 %}
-            <tr id ="{{fila.ficha.id}}">
+            <tr id ="{{fila.fichaId}}">
                 <td>{{ fila.tipo }}</td>
                 <td>{{ fila.indicador }}</td>
                 <td>{{ fila.resultado }}</td>
 
-                <td><input name="meta_2025_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2025 }}"></td>
-                <td><input name="meta_2026_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2026 }}"></td>
-                <td><input name="meta_2027_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2027 }}"></td>
-                <td><input name="meta_2028_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2028 }}"></td>
-                <td><input name="meta_2029_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2029 }}"></td>
-                <td><input name="meta_2030_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2030 }}"></td>
+                <td><input name="meta_2025_{{ fila.fichaId}}" type="number" min="0" value="{{ fila.metas.2025 }}"></td>
+                <td><input name="meta_2026_{{ fila.fichaId }}" type="number" min="0" value="{{ fila.metas.2026 }}"></td>
+                <td><input name="meta_2027_{{ fila.fichaId }}" type="number" min="0" value="{{ fila.metas.2027 }}"></td>
+                <td><input name="meta_2028_{{ fila.fichaId }}" type="number" min="0" value="{{ fila.metas.2028 }}"></td>
+                <td><input name="meta_2029_{{ fila.fichaId }}" type="number" min="0" value="{{ fila.metas.2029 }}"></td>
+                <td><input name="meta_2030_{{ fila.fichaId }}" type="number" min="0" value="{{ fila.metas.2030 }}"></td>
 
                 <td>{{ fila.medios }}</td>
             </tr>
