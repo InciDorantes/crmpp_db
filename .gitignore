@@ -1,0 +1,37 @@
+# Excluir entornos virtuales de Python
+venv/
+env/
+
+# Excluir archivos de caché de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Excluir archivos grandes y bases de datos
+*.h5
+*.csv
+*.sqlite3
+
+# Excluir logs y archivos temporales
+*.log
+*.tmp
+
+# Excluir imágenes y documentos
+*.pdf
+*.jpg
+*.png
+*.jpeg
+
+# Excluir carpetas de configuración de VSCode y Jupyter
+.vscode/
+.ipynb_checkpoints/
+.kernels/ 
+.jupyter/
+
+# Excluir archivos de salida de Jupyter
+*.ipynb_checkpoints
+*.nbconvert.ipynb
+
+.env
+nginx

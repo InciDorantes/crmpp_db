@@ -1,0 +1,90 @@
+digraph {
+	graph [bgcolor=transparent splines=ortho]
+	rankdir=BT size=80
+	superior [label="Mejorar la calidad del agua en el estado" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ei_14 [label="Adecuado mantenimiento de
+las redes de
+agua potable." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ei_14 -> superior
+	ei_15 [label="Conservación y regeneración
+de la estructura
+kárstica y recuperación
+de biodiversidad." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ei_15 -> superior
+	central [label="La población del estado de Yucatán cuenta con servicio eficiente
+de dotación y saneamiento de las aguas, buena salud y
+acuíferos de calidad" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ed_23 [label="Reducción de costos
+en tratamiento de
+agua." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	central -> ed_23
+	ed_23 -> ei_14
+	ed_24 [label="Presupuesto suficiente en
+tratamiento del agua." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	central -> ed_24
+	ed_24 -> ei_15
+	cd_26 [label="Manejo eficiente en
+los sistemas de
+abastecimiento y tratamiento
+de agua." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_26 -> central
+	cd_27 [label="Optimización en los
+servicios de atención
+al público a
+través de sistemas
+de calidad" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_27 -> central
+	cd_28 [label="Coordinación y participación
+entres las instancias
+involucradas en la
+distribución del agua" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_28 -> central
+	cd_29 [label="La población que
+tiene acceso a
+una toma de
+agua." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_29 -> central
+	cd_30 [label="Propiciar el aprovechamiento
+sustentable de cenotes
+coadyuvando a la
+disminución del comercio
+ilegal arqueológico" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_30 -> central
+	cd_31 [label="Adecuada socialización del
+reglamento de protección
+y conservación de
+los cenotes" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_31 -> central
+	ci_47 [label="Personal
+altamente
+calificado" fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_47 -> cd_26
+	ci_48 [label="Implementación
+de
+nuevas
+tecnologías." fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_48 -> cd_27
+	ci_49 [label="Suficiente
+presupuesto
+para
+las
+actividades
+de
+ampliación
+de
+redes
+hidráulicas." fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_49 -> cd_29
+	ci_50 [label="Cumplimiento
+de
+la
+normatividad
+de
+protección
+y
+conservación
+de
+los
+cenotes" fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_50 -> cd_30
+}

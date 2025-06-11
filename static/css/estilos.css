@@ -1,0 +1,613 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+*{
+    font-family: "Lato", sans-serif !important;
+    
+}
+
+#pseudo-body{
+ overflow-x: hidden !important;
+}
+
+h1{
+    text-align: center;
+  }
+
+/* TODASLAS TABLAS*/
+table th {
+  font-size: 1.3rem !important;
+  text-align: center !important;      /* Centra horizontalmente */
+  vertical-align: middle !important;  /* Centra verticalmente */
+}
+table td {
+  font-size: 1.1rem !important;
+}
+/*Formato 1*/
+
+table tbody tr td textarea{
+   border: none !important;
+}
+
+/*HOME*/
+.body-container {
+    padding: 20px;
+    margin: 20px auto ; 
+    max-width: 98% ;
+}
+
+#example.dataTable.no-footer{
+    border-spacing: 1px !important;
+    width: 100% !important;
+}
+
+table#example th {
+    background-color: rgb(194,153,92);
+    color: white;   
+    }
+
+
+/*REGISTER*/
+  
+.mega-conteniener{
+    margin: auto;
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between;
+    padding: auto;
+}
+.mega-conteniener > div {
+ margin-bottom: 50px; 
+  }
+
+.titulo {
+    display: flex;
+    align-items: center;
+}
+h2{
+    margin: 0;
+}
+#pp{
+    margin-left: 10px; font-size: 22px;
+    width: 60%;
+    color: #970E48;
+}
+#usuarios{
+    min-width: 30%;
+}
+
+.my-buttuns{
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: none;
+    background-color: #D5995C;
+    font-family: "Lato", sans-serif !important;
+}
+  
+.bloque {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 10px;
+  }
+  .titulo-seccion {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  .campo-generado {
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+/* formato 5*/
+table.my-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: #212529;
+  }
+table.my-table thead th {
+    background-color: #f8f9fa; /* gris claro tipo Bootstrap */
+    font-weight: 600;
+    text-align: left;
+    padding-bottom: 12px;
+    padding-top: 12px;
+    border-bottom: 2px solid #dee2e6;
+
+  }
+
+/* Celdas del cuerpo */
+table.my-table tbody td {
+    padding-bottom: 12px;
+    padding-top: 12px;
+    border-bottom: 1px solid #dee2e6;
+
+  }
+/* Última columna sin borde derecho */
+table.my-table thead th:last-child,
+table.my-table tbody td:last-child {
+  border-right: none;
+}
+
+/* Fila alterna (zebra) */
+table.my-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+table.my-table tr td input {
+    background-color: transparent; /* Fondo transparente */
+    border: none; /* Sin borde */
+    outline: none; /* Sin borde al enfocar (para evitar un borde de enfoque) */
+    color: black; /* Color de texto visible */
+    font-size: 1rem; /* Tamaño de fuente */
+    padding: 0; /* Opcional: Ajusta el padding si no quieres espacio extra */
+}
+  
+table.my-table tr td input:focus {
+    outline: none; /* Asegura que no haya borde visible cuando se hace clic en el input */
+    background-color: transparent; /* Asegura que el fondo siga siendo transparente */
+}
+
+.my-table.tabla-bordes-punteados td:not(:last-child),
+.my-table.tabla-bordes-punteados th:not(:last-child) {
+  border-right: 1px dotted gray;
+}
+/*LOGIN*/
+.container_log {
+    width: 40%; 
+    max-width: 400px; 
+    background-color: #970E48; 
+    color: white;
+    padding: 20px; 
+    border-radius: 15px; 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); 
+}
+
+/* Asegurar que el contenedor esté centrado */
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+}
+
+/* Estilos para los inputs */
+.container_log .form-control {
+    background-color: #333; 
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.container_log .form-control::placeholder {
+    color: #bbb; 
+}
+
+
+.container_log .btn-primary {
+    background-color: #D5995C;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.container_log .btn-primary:hover {
+    background-color: #970E48;
+}
+.center-button {
+    display: flex;
+    justify-content: center;
+}
+.nav-link.active{
+    background-color: #970E48 !important;
+    color: #f9f9f9 !important;
+}
+#form-hide{
+    display: none;
+}
+
+
+/*Diagrama*/
+#problema-diagram {
+    transform-origin: 0 0;
+  }
+  .zoom-controls {
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 5px;
+    margin-top: 1rem;
+    margin-bottom: 0.2rem;
+  }
+  
+  .zoom-controls button {
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+#reset-zoom{
+    padding-right: 3rem;
+}
+
+/* MIR */
+.change-value{
+    display: none;
+}
+
+.ficha{
+  font-family: "Lato", sans-serif !important;
+  font-size: 1rem !important;
+}
+
+.ficha .col-4 {
+  background-color: gainsboro!important;
+  display: flex !important;
+  padding-top: 5px;
+  border: 2px dotted gainsboro !important;
+
+}
+.ficha .col-8{
+  border: 2px dotted gainsboro !important;
+}
+.vars .row .col{
+  border: 2px dotted gainsboro !important;
+}
+
+.guardadofichas{
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.guardadofichas button {
+  width: 5rem !important;
+}
+.mt-4.p-3.border.rounded.ficha_proposito {
+  padding: 0px !important;
+  font-style: bold;
+}
+
+.ficha-contrainer{
+  display: flex;
+  flex-direction: column; /* Pone los hijos uno debajo del otro */
+  align-items: center;    /* Centra horizontalmente los hijos */
+  justify-content: center; 
+}
+.ficha_proposito h4 {
+  width: 100%;
+  background-color: gray;
+  color: white;
+  border-radius: 0.25rem;
+}
+#estructura-proposito-container .row {
+  margin-left: 0;
+  margin-right: 0;
+  width: 95% !important;
+}
+
+.row.proposito .col-4{
+  background-color: gainsboro !important;
+  padding-top: 5px;
+  border: 2px dotted gainsboro !important;
+  border-radius: .25rem !important;
+}
+
+.row.proposito .col-8{
+  padding-top: 5px;
+  border: 2px dotted gainsboro !important;
+  border-radius: 5px !important;
+  border-radius: .25rem !important;
+}
+
+.ficha-contrainer .col-4{
+  background-color: gainsboro !important;
+}
+.ficha-contrainer .col-12 {
+  border-radius: .25rem !important;
+  background-color: #95315b; 
+}
+
+/*Fichas componete*/
+
+.componente-item.card.mb-3 .card-header{
+  font-family: "Lato", sans-serif !important;
+  background-color: gainsboro !important;
+  color: #212529;
+}
+
+.indicomponetes .ficha-contrainer .row{
+  width: 98% !important;
+}
+
+.indicomponetes .ficha-contrainer .row.ficha{
+  width: 98% !important;
+}
+
+
+/* Estilo base para el contenedor del diagrama */
+.hidder{
+  display: none;
+}
+
+
+/*nuevo diagrama*/
+#pseudo-body::-webkit-scrollbar {
+  display: none !important;
+}
+#container::-webkit-scrollbar {
+  display: none !important;
+}
+.canvas::-webkit-scrollbar {
+  display: none !important;
+}
+.endpoint-cursor {
+  cursor: crosshair !important;
+}
+#container-ao {
+  width: 100%;
+  height: 90vh;
+  overflow: hidden;
+  position: relative;
+  background-color: #f0f0f0;
+  cursor: grab;
+}
+
+
+#container {
+  width: 100%;
+  height: 90vh;
+  overflow: hidden;
+  position: relative;
+  background-color: #f0f0f0;
+  cursor: grab;
+}
+.canvas {
+  overflow: hidden;
+  width: 9000px;
+  height: 9000px;
+  background-image: linear-gradient(#ccc 1px, transparent 1px),
+                    linear-gradient(90deg, #ccc 1px, transparent 1px);
+  background-size: 20px 20px;
+  position: absolute;
+  transform-origin: top left;
+}
+
+.reset-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 8px 12px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  z-index: 10;
+  cursor: pointer;
+}
+.zoom {
+   position: absolute;
+   top: 60px;
+   left: 10px;
+   padding: 8px 12px;
+   background: #333;
+   color: white;
+   border: none;
+   border-radius: 0.25rem;
+   z-index: 10;
+   cursor: pointer;
+}
+.node {
+  position: absolute;
+  min-width: 200px !important;
+  min-height: 100px !important;
+  max-width: 1000px !important;
+  max-height: 400px !important;
+  background-color: gainsboro;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+/* Estilo para los textarea dentro de cada nodo */
+.node textarea {
+  width: 100%;
+  height: 100%;
+  max-width: 900px !important;
+  max-height: 400px !important;
+  resize: both; /* Permite cambiar el tamaño */
+  overflow: auto;
+  background-color: transparent;
+  border: none;
+}
+
+/* Estilo para los botones de eliminación */
+.node button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px;
+  color: red !important;
+  border: none;
+  cursor: pointer;
+}
+.boton-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+/* Estilo para el área de conexión del nodo */
+.jsplumb-endpoint {
+  width: 5px;
+  height: 5px;
+  background-color: black;
+}
+
+/*Nodos*/
+.jtk-endpoint {
+    transition: all 0.3s ease;
+}
+
+.jtk-connector {
+    z-index: 1;
+}
+
+.jtk-overlay {
+    z-index: 2;
+}
+
+/* Estilos solo para endpoints dentro de #container-ao */
+#container-ao .jtk-endpoint {
+  position: absolute;
+  z-index: 10;
+}
+
+/* Estilos solo para conectores dentro de #container-ao */
+#container-ao .jtk-connector {
+  stroke: black;
+}
+
+#container-ao .jtk-overlay {
+  z-index: 2;
+}
+/* Evita que los endpoints afecten el layout */
+#container-ao .jtk-endpoint, .jtk-endpoint * {
+  pointer-events: visible;
+  visibility: visible;
+}
+#diagramContainer {
+    min-height: 800px;
+    min-width: 100%;
+    transform-style: preserve-3d;
+}
+
+[id^="causa_directa"] {
+  background-color: gray !important;
+}
+[id^="medio_directo"] {
+  background-color: gray !important;
+}
+
+[id^="problema_central"] {
+  background-color: rgb(212, 182, 113) !important;
+}
+
+[id^="solucion_problema"] {
+  background-color: rgb(194, 153, 92) !important;
+}
+
+[id^="efecto_directo"] {
+  background-color: rgb(212, 182, 113)  !important;
+}
+[id^="fin_directo"] {
+  background-color: rgb(212, 182, 113)  !important;
+}
+
+[id^="efecto_indirecto"] {
+  background-color: rgb(188, 34, 81) !important;
+}
+[id^="fin_indirecto"] {
+  background-color: rgb(188, 34, 81) !important;
+}
+
+[id^="efecto_superio"] {
+  background-color: rgb(151, 14, 72) !important;
+}
+[id^="fin_superior"] {
+  background-color: rgb(151, 14, 72) !important;
+}
+
+/*HOVER FORMATO 6*/
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 250px;
+  background-color: #ffc107;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: -130%; /* debajo del texto */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* TABLAS FORMATOS NUEVOS*/
+/* FORMATO 12*/
+#formato-12 tr td textarea{
+  width: 100%;
+}
+
+.warning-box{
+    background-color: #fff3cd; /* Amarillo claro */
+    border: 1px solid #ffeeba; /* Borde amarillo */
+    color: #856404; /* Texto oscuro */
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    display: flex;
+    max-width: 30rem;
+    margin-bottom: 1rem;
+  }
+
+/*formato 16*/
+.tablatipouno thead tr th{
+  width: 11% !important; 
+  background-color: #5d1f3f !important; 
+  color: white !important;
+}
+.tablatipouno thead tr th textarea{
+  width: 100% !important; 
+  height: 100% !important; 
+}
+
+.card table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* importante para que los anchos se respeten */
+}
+
+
+.card td {
+  max-width: 7%;
+  text-align: center;
+}
+
+.card table .tablatipouno textarea {
+  width: 100%;
+  height: 411px; /* 9 filas * 30px */
+  box-sizing: border-box;
+  resize: vertical; /* o 'none' si no quieres que se pueda redimensionar */
+  font-size: 0.85rem;
+  margin: 0;
+  padding: 4px;
+}
+
+.card input[type=number] {
+  width: 80px; /* fija ancho para inputs numéricos */
+}

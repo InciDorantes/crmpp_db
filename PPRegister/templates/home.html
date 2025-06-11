@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% csrf_token %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="col-md-6 offset-md-3">
+  {% if is_authenticated %}
+</div>
+<br>
+{% if tipo_usuario == "ultrauser" %}
+{% endif %}
+<div class="register-container" style="margin-bottom: 2.5rem;">
+  <!-- Formulario para guardar el programa -->
+  <form method="POST" id="form_pp">
+    {% csrf_token %}
+    <div class="titulo" style="display: none;">
+      <h3>Número de Programa Presupuestario: </h3>
+      <input id="num_pp" type="text" name="num_pp" style="margin-left: 10px;">
+    </div>
+    <div class="titulo">
+      <h2>Nombre del Programa Presupuestario:</h2> 
+      <input id="pp" type="text" name="nombre_pp">
+    </div>
+    <p>Centros de costos disponibles: {{ user_profiles|length }}</p>
+    <div class="permisos" style="margin-bottom: 1rem;">
+    <h5>Seleccione a los centros de costos relacionados con el PP</h5> 
+    <select id="usuarios" name="usuarios" multiple="multiple" style="width: 300px;">
+      {% for profile in user_profiles %}
+        <option value="{{ profile.user.id }}">
+          {{ profile.user.username }} - {{ profile.siglas }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="my-buttuns" name="guardar_programa_home">Guardar</button>
+  </form>
+  </div>
+
+<!-- Tabla para editar el programa -->
+<div class="table-container">
+  <div class="table-responsive">
+    <table id="example">
+      <thead>
+        <tr>
+          <th>Num PP</th>
+          <th>Programa Presupuestario</th>
+          <th>Editar</th>
+          <th>Ver</th>
+          <th>Descargar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in programas_data %}
+          <tr>
+            <td>
+            {% if tipo_usuario == "superuser" %}
+            <form method="post" style="display: inline;">
+              {% csrf_token %}
+              <input type="hidden" name="id_pp" value="{{ item.pp.id_pp }}">
+              <input type="number" name="num_pp_superuser" placeholder="..." style="border: none; width: 85%;" value="{{item.pp.num_pp}}">
+              <button type="submit" name="guardar_numpp" style="width:2rem; border:none; height: 2rem; background-color: transparent;">💾</button>
+            </form>
+              {% elif item.pp.num_pp == 0 %}
+              <input type="number" placeholder="..." style="border: none;">
+            {% else %}
+              {{ item.pp.num_pp }}
+            {% endif %}
+            </td>
+            <td id="nombre-pp-ex">{{ item.pp.nombre_pp }}</td>
+            <td>
+              {% if item.es_editor or tipo_usuario == "superuser" %}
+                <a href="{% url 'registro' item.pp.id_pp %}">Editar</a>
+              {% else %}
+                Editar
+              {% endif %}
+            </td>
+            <td><a href="{% url 'visualizar' item.pp.id_pp %}">Ver</a></td>
+            <td>
+              <button 
+                type="button" 
+                class="btn-descargar" 
+                data-id="{{ item.pp.id_pp }}"
+                style="background-color: #fa896b !important; border-radius: 5px !important; border: none !important; color: aliceblue;">
+                Descargar
+              </button>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>            
+    </table>
+  </div>
+</div>
+  
+<div class="col-md-6 offset-md-3">
+  {% else %}
+    <h1>Bienvenido, por favor inicie sesión para ver más información.</h1>
+</div>
+  {% endif %} 
+
+<script>
+  $(document).on('click', '.btn-descargar', function() {
+    const id_pp = $(this).data('id');
+      const $btn = $(this);  //
+
+       $btn.prop('disabled', true);               // desactivar botón para evitar múltiples clicks
+      $btn.text('Cargando...'); 
+
+    $.ajax({
+      url: `/descargar/${id_pp}/`,  // Tu vista que genera el archivo
+      type: 'GET',
+      xhrFields: {
+        responseType: 'blob'  // para manejar archivos binarios
+      },
+      success: function(blob, status, xhr) {
+        // Intentar obtener el nombre de archivo desde el header (opcional)
+        const disposition = xhr.getResponseHeader('Content-Disposition');
+        let filename = 'formatos.xlsx';
+        if (disposition && disposition.indexOf('filename=') !== -1) {
+          filename = disposition.split('filename=')[1].replace(/['"]/g, '');
+        }
+
+        // Crear un enlace y simular clic para descargar
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);  // Limpiar memoria
+
+        $btn.prop('disabled', false);
+        $btn.text('Descargar');
+      },
+      error: function() {
+        $btn.prop('disabled', false);
+        $btn.text('Descargar');
+        $('#mensaje').text('Ocurrió un error al generar el archivo.');
+      }
+    });
+  });
+</script>
+  
+{% endblock %}

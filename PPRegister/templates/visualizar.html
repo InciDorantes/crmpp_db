@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-target');
+            // ocultar todos los contenidos
+            document.querySelectorAll('.sheet-content').forEach(div => div.style.display = 'none');
+            // mostrar el seleccionado
+            document.getElementById(target).style.display = 'block';
+        });
+    });
+});
+</script>
+
+<style>
+    .sheet-content {
+        margin-top: 20px;
+    }
+
+    .excel-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .excel-table td, .excel-table th {
+        border: 1px solid #999;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .excel-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .tab-button {
+        margin: 5px 5px 0 0;
+        padding: 8px 12px;
+        background-color: #e0e0e0;
+        border: 1px solid #aaa;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .tab-button:hover {
+        background-color: #d0d0d0;
+    }
+</style>
+
+<h2>Visualización del Excel</h2>
+<div style="overflow-x: auto; max-height: 80vh; overflow-y: auto;">
+    {{ excel_html|safe }}
+</div>
+
+{% endblock %}

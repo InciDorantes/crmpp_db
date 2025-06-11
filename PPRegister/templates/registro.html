@@ -1,0 +1,1617 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load humanize%}
+{% load extras %}
+<!--Guardar movimiento de la ficha proposito-->
+<script>
+const appState = {
+  proposito: {
+    indicadores: {},    // Guardará TODOS los valores de inputs/selects
+    contenedores: {},
+    fichas:{}    // Guardará HTML de contenedores dinámicos
+  }
+};
+const appStateComp ={
+  componentes:{
+    indicadores:{},
+    contenedores:{},
+    fichas:{}
+  }
+}
+const appStateAct ={
+  actividades:{
+    indicadores:{},
+    contenedores:{},
+    fichas:{}
+  }
+}
+</script>
+<!--Forzando el style-->
+<style>
+  table tbody tr td textarea{
+   border: none !important;
+  }
+
+  .buton-eliminar-formatos {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 30%;
+    width: 32px;
+    height: 32px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .buton-eliminar-formatos:hover {
+    background-color: #c82333;
+  }
+
+
+</style>
+<!--END-->
+<div id="pseudo-body">
+<div style="margin-bottom: 2rem;">
+<h1>Programa Presupuestario: {{ pp.num_pp }} - {{ pp.nombre_pp }}</h1>
+<a id="id_numero_pp" style="display: none;">{{pp.id_pp}}</a>
+</div>
+
+<ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-bottom: 2rem !important;">
+	<li class="nav-item" role="presentation">
+		<button class="nav-link active" id="context-tab" data-bs-toggle="tab" data-bs-target="#context-home" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Antecedentes</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="po-tab" data-bs-toggle="tab" data-bs-target="#po-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Población Objetivo</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="ap-tab" data-bs-toggle="tab" data-bs-target="#ap-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Árbol de Problemas</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="ao-tab" data-bs-toggle="tab" data-bs-target="#ao-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Árbol de Objetivos</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="aped-tab" data-bs-toggle="tab" data-bs-target="#aped-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">PED RM</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="bys-tab" data-bs-toggle="tab" data-bs-target="#bys-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Bienes y Servicios</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="corr-tab" data-bs-toggle="tab" data-bs-target="#corr-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Corresponsables</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="mir-tab" data-bs-toggle="tab" data-bs-target="#mir-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">MIR</button>
+	</li>
+  <!-- FICHAS TECNICAS DE INDICADORES-->
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="if-tab" data-bs-toggle="tab" data-bs-target="#if-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">FTI Fin</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="ip-tab" data-bs-toggle="tab" data-bs-target="#ip-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">FTI Propósito</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="ic-tab" data-bs-toggle="tab" data-bs-target="#ic-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">FTI Componentes</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="iA-tab" data-bs-toggle="tab" data-bs-target="#ia-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">FTI Actividad</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="fi-tab" data-bs-toggle="tab" data-bs-target="#fi-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Fuentes de Información</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="id-tab" data-bs-toggle="tab" data-bs-target="#id-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Informes de Desempeño</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="mr-tab" data-bs-toggle="tab" data-bs-target="#mr-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Mediano plazo</button>
+	</li>
+   <li class="nav-item" role="presentation">
+		<button class="nav-link" id="presu-tab" data-bs-toggle="tab" data-bs-target="#presu-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Presupuesto</button>
+	</li>
+  <li class="nav-item" role="presentation">
+		<button class="nav-link" id="ff-tab" data-bs-toggle="tab" data-bs-target="#ff-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Fuentes de Finaciamiento</button>
+	</li>
+</ul>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<!-- CORRESPONSABLES -->
+<div class="tab-content" id="corr">
+	<div class="tab-pane fade show" id="corr-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;">Formato 9: Corresponsabilidad</b><br>
+    <div>
+      <table  class="my-table table tabla-bordes-punteados" id="formato-9-table">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 11.6% !important; background-color: #5d1f3f !important; color: white !important;">Dependencia/Entidad</th>
+            <th scope="col" style="width: 12.8% !important; background-color: #5d1f3f !important; color: white !important;">Área</th>
+            <th scope="col" style="width: 8% !important; background-color: #5d1f3f !important; color: white !important;">Centro de Costos</th>
+            <th scope="col" style="width: 12.8% !important; background-color: #5d1f3f !important; color: white !important;">Función en la ejecución del programa</th>
+            <th scope="col" style="width: 12.8% !important; background-color: #5d1f3f !important; color: white !important;">Interactúa con</th>
+            <th scope="col" style="width: 12.8% !important; background-color: #5d1f3f !important; color: white !important;">Mecanismos de coordinación</th>
+            <th scope="col" style="width: 12.8% !important; background-color: #5d1f3f !important; color: white !important;">Responsabilidad</th>
+            <th scope="col" style="width: 17.4% !important; background-color: #5d1f3f !important; color: white !important;">Atribución al RECAPY</th>
+            <th scope="col" style="width: 1% !important; background-color: #5d1f3f !important; color: white !important;">🗑️</th>
+          </tr>
+        </thead>
+        <tbody>
+          <script>
+            const usuarios = {{ usuarios_json|safe }};
+          </script>
+          {% for usuario in usuarios_con_datos %}
+          <tr>
+            <td data-tipo="dependencia">{{ usuario.dependencia }}</td>
+            <td data-tipo="area">{{ usuario.area }}</td>
+            <td data-tipo="centro de costos">{{ usuario.username }}</td>
+            <td><textarea type="text" placeholder="Función en la ejecución" id="funcion_{{ usuario.username }}" data-tipo="funcion" name="funcion" style="width: 100%;">{{ usuario.funcion }}</textarea></td>
+            <td><textarea type="text" placeholder="Interactua con" id="interact_{{ usuario.username }}" data-tipo="interact" name="interact" style="width: 100%;">{{ usuario.interactua_con }}</textarea></td>
+            <td><textarea type="text" placeholder="Mecanismo de coordinación" id="meca_{{ usuario.username }}" data-tipo="meca" name="meca" style="width: 100%;">{{ usuario.mecanismo }}</textarea></td>
+            <td><textarea type="text" placeholder="Responsabilidad" id="respo_{{ usuario.username }}" data-tipo="repso" name="repso" style="width: 100%;">{{ usuario.responsabilidad }}</textarea></td>
+            <td><textarea type="text" placeholder="Atribución RECAPY" id="atrib_{{ usuario.username }}" data-tipo="atrib" name="atrib" style="width: 100%;">{{ usuario.atribucion }}</textarea></td>
+            <td><button type="button" class="eliminar-f9 buton-eliminar-formatos" id="eliminar-f9">x</button></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <button type="button" style="border-radius: 0.25rem; border: none; background-color: #5d1f3f !important; color: white !important; margin-bottom: 1rem;" id="boton-f9">Agregar más corresponsables</button>
+    </div>
+    <div>
+      <button type="button" class="btn btn-warning" name="guardar_formato_nueve" id ="guardar_formato_nueve" style="margin-bottom: 3rem !important;">Guardar formato 9</button>
+    </div>
+  </div>
+</div>
+<!--CONTEXTO-->
+<div class="tab-content" id="context">
+	<div class="tab-pane fade show active" id="context-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+		<form method="POST">
+      {% csrf_token %}
+       <!-- formato 1-->
+      <div>
+        <div>
+          <b style="font-size: 25px !important;"> Formato 1: Documentación de buenas prácticas y programas similares </b><br><br>
+        </div>
+        <div>
+          <table class="my-table table tabla-bordes-punteados" id="formatouno">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 12.5% !important; background-color: #5d1f3f !important; color: white !important;">Nombre del programa</th>
+                <th scope="col" style="width: 12.5% !important; background-color: #5d1f3f !important; color: white !important;">Lugar donde se implementó</th>
+                <th scope="col" style="width: 12.5% !important; background-color: #5d1f3f !important; color: white !important;">Objetivo</th>
+                <th scope="col" style="width: 12.5% !important; background-color: #5d1f3f !important; color: white !important;">Descripción</th>
+                <th scope="col" style="width: 12.5% !important; background-color: #5d1f3f !important; color: white !important;">Población objetivo</th>
+                <th scope="col" style="width: 12.5% !important; background-color: #5d1f3f !important; color: white !important;">Bienes y servicios que entregan</th>
+                <th scope="col" style="width: 12.5% !important; background-color: #5d1f3f !important; color: white !important;">Resultados de evaluaciones</th>
+                <th scope="col" style="width: 12.5% !important; background-color: #5d1f3f !important; color: white !important;">Vinculo al documento fuente de información</th>
+                <th scope="col" style="width: 1% !important; background-color: #5d1f3f !important; color: white !important;">🗑️</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if formato1_list %}
+                {% for fila in formato1_list %}
+                  <tr>
+                    <td><textarea type="text" placeholder="Nombre" id="nombre_formato1_{{ forloop.counter }}" name="nombre" style="width: 100%;">{{ fila.nombre }}</textarea></td>
+                    <td><textarea type="text" placeholder="Lugar" id="lugar_formato1_{{ forloop.counter }}" name="lugar" style="width: 100%;">{{ fila.lugar_implementacion }}</textarea></td>
+                    <td><textarea type="text" placeholder="Objetivo" id="objetivo_formato1_{{ forloop.counter }}" name="objetivo" style="width: 100%; border: none;">{{ fila.objetivo }}</textarea></td>
+                    <td><textarea type="text" placeholder="Descripción" id="descripcion_formato1_{{ forloop.counter }}" name="descripcion" style="width: 100%; border: none;">{{ fila.descripcion }}</textarea></td>
+                    <td><textarea type="text" placeholder="Población objetivo" id="poblacion_formato1_{{ forloop.counter }}" name="poblacion" style="width: 100%;">{{ fila.poblacion_objetivo }}</textarea></td>
+                    <td><textarea type="text" placeholder="Bienes y servicios" id="bys_formato1_{{ forloop.counter }}" name="bys" style="width: 100%;">{{ fila.bienes_servicios }}</textarea></td>
+                    <td><textarea type="text" placeholder="Resultados " id="resultados_formato1_{{ forloop.counter }}" name="result" style="width: 100%; border: none;">{{ fila.resultados_evaluacion }}</textarea></td>
+                    <td><textarea type="text" placeholder="Vinculo" id="vinculo_formato1_{{ forloop.counter }}" name="vinculo" style="width: 100%;">{{ fila.vinculo_documento }}</textarea></td>
+                    <td>
+                      <button type="button" class="eliminar-f1 buton-eliminar-formatos">x</button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+              <tr>
+                <td><textarea type="text" placeholder="Nombre" id="nombre_formato1_1" name="nombre" style="width: 100%;"></textarea></td>
+                <td><textarea type="text" placeholder="Lugar" id="lugar_formato1_1" name="lugar"  style="width: 100%;"></textarea></td>
+                <td><textarea type="text" placeholder="Objetivo" id="objetivo_formato1_1" name="objetivo" style="width: 100%; border: none;"></textarea></td>
+                <td><textarea type="text" placeholder="Descripción" id="descripcion_formato1_1" name="descripcion" style="width: 100%; border: none;"></textarea></td>
+                <td><textarea type="text" placeholder="Población objetivo" id="poblacion_formato1_1" name="poblacion" style="width: 100%;"></textarea></td>
+                <td><textarea type="text" placeholder="Bienes y servicios" id="bys_formato1_1" name="bys" style="width: 100%;"> </textarea></td>
+                <td><textarea type="text" placeholder="Resultados " id="resultados_formato1_1" name="result"  style="width: 100%; border: none;"></textarea></td>
+                <td><textarea type="text" placeholder="Vinculo" id="vinculo_formato1_1" name="vinculo"  style="width: 100%;"></textarea></td>
+                <td><button type="button" class="eliminar-f1 buton-eliminar-formatos">x</button></td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+          <button type="button" style="border-radius: 0.25rem; border: none; background-color: #5d1f3f; color: #f8f9fa; margin-bottom: 1rem;" id="boton-f1">Agregar más</button>
+        </div>
+        
+        <div>
+          <button type="button" class="btn btn-warning" name="guardar_formato_uno" id ="guardar_formato_uno" style="margin-bottom: 3rem !important;">Guardar formato 1</button>
+        </div>
+      </div>
+        <!-- formato 2-->
+      <div>
+        <div class="formato2">
+          <b style="font-size: 25px !important;"> Formato 2: Vinculación con otros programas implementados en el Estado </b><br><br>
+        </div>
+        <div>
+          <table class="my-table table tabla-bordes-punteados" id="formatodos">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;">Nombre del programa</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;" >Tipo de programa</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;">Objetivo</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;">Población objetivo</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;">Bienes y servicios que entregan</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;">Cobertura</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;">Institución/Dirección que coordina</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;">Interdependencia</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #c2995cd7 !important;">Descripción de la interdependencia</th>
+                <th scope="col" style="width: 1% !important; background-color: #c2995cd7 !important;">🗑️</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% if formato2_list %}
+              {% for obj in formato2_list %}
+                <tr>
+                  <td>
+                    <textarea type="text" placeholder="Nombre" name="nombre" id="nombre_formato2_{{ forloop.counter0 }}" style="width: 100%;">{{ obj.nombre }}</textarea>
+                  </td>
+                  <td>
+                    <select id="tipo_formato2_{{ forloop.counter0 }}" name="formato2_list[{{ forloop.counter0 }}][tipo_programa]" class="form-select w-auto" style="width: 100%;" onchange="mostrarOtroTipo(this)">
+                      <option value="federal" {% if obj.tipo_programa == 'federal' %}selected{% endif %}>1=Federal</option>
+                      <option value="estatal" {% if obj.tipo_programa == 'estatal' %}selected{% endif %}>2=Estatal</option>
+                      <option value="municipal" {% if obj.tipo_programa == 'municipal' %}selected{% endif %}>3=Municipal</option>
+                      <option value="otro" {% if obj.tipo_programa != 'federal' and obj.tipo_programa != 'estatal' and obj.tipo_programa != 'municipal' %}selected{% endif %}>4=Otro</option>
+                  </select>
+                  <textarea type="text" id="otro_tipo_formato2_{{ forloop.counter0 }}" data-select-id="tipo_formato2_{{ forloop.counter0 }}" style="display: {% if obj.tipo_programa != 'federal' and obj.tipo_programa != 'estatal' and obj.tipo_programa != 'municipal' %}block{% else %}none{% endif %}; margin-top: 10px;">{% if obj.tipo_programa != 'federal' and obj.tipo_programa != 'estatal' and obj.tipo_programa != 'municipal' %}{{ obj.tipo_programa }}{% endif %}</textarea>
+                  </td>
+                  <td>
+                    <textarea type="text" name="objetivo" placeholder="Objetivo" id="objetivo_formato2_{{ forloop.counter0 }}" style="width: 100%;" >{{ obj.objetivo }}</textarea>
+                  </td>
+                  <td>
+                    <textarea type="text" name="poblacion" placeholder="Población objetivo" id="poblacion_formato2_{{ forloop.counter0 }}" style="width: 100%;">{{ obj.poblacion_objetivo }}</textarea>
+                  </td>
+                  <td>
+                    <textarea type="text" name="bys" placeholder="Bienes y servicios" id="bys_formato2_{{ forloop.counter0 }}" style="width: 100%;">{{ obj.bienes_servicios }}</textarea>
+                  </td>
+                  <td>
+                    <select id="cobertura_formato2_{{ forloop.counter0 }}" name="cobertura" class="form-select w-auto" style="width: 100%;" onchange="mostrarOtroCobertura(this)">
+                      <option value="todos" {% if obj.cobertura == 'todos' %}selected{% endif %}>1=Todos los municipios</option>
+                      <option value="regional" {% if obj.cobertura == 'regional' %}selected{% endif %}>2=Regional</option>
+                      <option value="municipal" {% if obj.cobertura == 'municipal' %}selected{% endif %}>3=Municipal</option>
+                      <option value="otro" {% if obj.cobertura != 'todos' and obj.cobertura != 'regional' and obj.cobertura != 'municipal' %}selected{% endif %}>4=Otro</option>
+                    </select>
+                    <textarea type="text" id="otro_cobertura_formato2_{{ forloop.counter0 }}" data-select-id="cobertura_formato2_{{ forloop.counter0 }}" style="display: {% if obj.cobertura != 'todos' and obj.cobertura != 'regional' and obj.cobertura != 'municipal' %}block{% else %}none{% endif %}; margin-top: 10px;">{% if obj.cobertura != 'todos' and obj.cobertura != 'regional' and obj.cobertura != 'municipal' %}{{ obj.cobertura }}{% endif %}</textarea>
+                  </td>
+                  <td>
+                    <textarea type="text" placeholder="Institución/Dirección" name="institucion_coordinadora" id="institucion_coordinadora_formato2_{{ forloop.counter0 }}" style="width: 100%;">{{ obj.institucion_coordinadora }}</textarea>
+                  </td>
+                  <td>
+                    <select id="interdependencia_formato2_{{ forloop.counter0 }}" name="interdependencia" class="form-select w-auto" style="width: 100%;">
+                      <option value="complementario" {% if obj.interdependencia == 'complementario' %}selected{% endif %}>1= Complementario</option>
+                      <option value="dupli" {% if obj.interdependencia == 'dupli' %}selected{% endif %}>2= Posible Duplicidad</option>
+                    </select>
+                  </td>
+                  <td>
+                    <textarea type="text" name="descripinter" placeholder="Vínculo" id="descripcion_interdependencia_formato2_{{ forloop.counter0 }}" style="width: 100%;">{{ obj.descripcion_interdependencia }}</textarea>
+                  </td>
+                  <td>
+                    <button type="button" class="eliminar-f2 buton-eliminar-formatos">x</button>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td><textarea type="text" placeholder="Nombre" name="nombre" id="nombre_formato2_1" style="width: 100%;"></textarea></td>
+                <td>
+                  <select id="tipo_formato2_1" name="tipo" class="form-select w-auto" style="width: 100%;" onchange="mostrarOtroTipo(this)" >
+                  <option value ="federal">1=Federal</option>
+                  <option value ="estatal">2=Estatal</option>
+                  <option value ="municipal">3=Municipal</option>
+                  <option value ="otro"> 4 = Otro</option>
+                  </select>
+                  <textarea  id="otro_tipo_formato2_1" data-select-id="tipo_formato2_1" placeholder="Especifica otro..." style="display: none; margin-top: 10px;" ></textarea>
+                </td>
+                <td><textarea  name="objetivo" placeholder="Objetivo" id="objetivo_formato2_1" style="width: 100%;"></textarea></td>
+                <td><textarea  name="poblacion" placeholder="Población objetivo" id="poblacion_formato2_1" style="width: 100%;"></textarea></td>
+                <td><textarea name="bys" placeholder="Bienes y servicios" id="bys_formato2_1" style="width: 100%;"> </textarea></td>
+                <td>
+                  <select id="cobertura_formato2_1" name="cobertura" class="form-select w-auto" style="width: 100%;" onchange="mostrarOtroCobertura(this)">
+                  <option value="todos" >1=Todos los municipios</option>
+                  <option value ="regional">2=Regional</option>
+                  <option value ="municipal">3=Municipal</option>
+                  <option value ="otro"> 4 = Otro</option>
+                  </select>
+                  <textarea data-select-id="cobertura_formato2_1"  id="otro_cobertura_formato2_1" placeholder="Especifica otro..." style="display: none; margin-top: 10px;" ></textarea>
+                </td>
+                </td>
+                <td><textarea placeholder="Institución/Dirección " id="institucion_coordinadora_formato2_1"  style="width: 100%;"></textarea></td>
+                <td>
+                  <select id="interdependencia_formato2_1" name="interdep" class="form-select w-auto" style="width: 100%;">
+                  <option value="complementario" >1= Complementario</option>
+                  <option value ="dupli">2= Posible Duplicidad</option>
+                  </select>
+                  </td>
+                <td><textarea type="text" name="descripinter" placeholder="Vinculo" id="descripcion_interdependencia_formato2_1"  style="width: 100%;"></textarea></td>
+                <td><button type="button" class="eliminar-f2 buton-eliminar-formatos" >x</button></td>
+              </tr>
+            {% endif %}
+            </tbody>
+          </table>
+          <button type="button" style="border-radius: 0.25rem; border: none; background-color: #c2995cd7; color: #f8f9fa; margin-bottom: 1rem;" id="boton-f2">Agregar más</button>
+        </div>
+        <div>
+        <button type="button" class="btn btn-warning" name="guardar_formato_dos" id ="guardar_formato_dos" style="margin-bottom: 3rem !important;">Guardar formato 2</button>
+      </div>
+      </div>
+      <!-- formato 3-->
+      <div>
+        <div>
+          <b style="font-size: 25px !important;"> Formato 3: Identificación de involucrados </b><br><br>
+        </div>
+        <div>
+          <table class="my-table table tabla-bordes-punteados" id="formatotres">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 11.1% !important; background-color: #5d1f3f !important; color: white !important;">Tipo de Actor</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #5d1f3f !important; color: white !important;;" >Nombre</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #5d1f3f !important; color: white !important;">Descripción del tipo de relación con el programa</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #5d1f3f !important; color: white !important;">Posición</th>
+                <th scope="col" style="width: 11.1% !important; background-color: #5d1f3f !important; color: white !important;">Influencia</th>
+                <th scope="col" style="width: 1% !important; background-color: #5d1f3f !important">🗑️</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if formato3_list %}
+                {% for obj in formato3_list %}
+                <tr>
+                  <td>
+                    <input type="text" name="formato3_list[{{ forloop.counter0 }}][tipo_actor]" id="tipo_formato3_{{ forloop.counter0 }}" style="width: 100%;" value="{{ obj.tipo_actor }}">
+                  </td>
+                  <td>
+                    <input type="text" name="formato3_list[{{ forloop.counter0 }}][nombre]" id="nombre_formato3_{{ forloop.counter0 }}" style="width: 100%;" value="{{ obj.nombre }}">
+                  </td>
+                  <td>
+                    <textarea name="formato3_list[{{ forloop.counter0 }}][descripcion]" id="descripcion_formato3_{{ forloop.counter0 }}" style="width: 100%; border: none;">{{ obj.descripcion }}</textarea>
+                  </td>
+                  <td>
+                    <input type="text" name="formato3_list[{{ forloop.counter0 }}][posicion]" id="posicion_formato3_{{ forloop.counter0 }}" style="width: 100%;" value="{{ obj.posicion }}">
+                  </td>
+                  <td>
+                    <input type="text" name="formato3_list[{{ forloop.counter0 }}][influencia]" id="influencia_formato3_{{ forloop.counter0 }}" style="width: 100%;" value="{{ obj.influencia }}">
+                  </td>
+                  <td>
+                    <button type="button" class="eliminar-f3 buton-eliminar-formatos" >x</button>
+                  </td>
+                </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td><input type="text" placeholder="Tipo" id="tipo_formato3_1" style="width: 100%;"></td>
+                <td><input type="text" placeholder="Nombre" id="nombre_formato3_1" style="width: 100%;"></td>
+                <td><textarea placeholder="Descripción" id="descripcion_formato3_1" style="width: 100%; border: none;"></textarea> </td>
+                <td><input type="text" placeholder="Posición" id="posicion_formato3_1" style="width: 100%;"></td>
+                <td><input type="text" placeholder="influencia" id="influencia_formato3_1"  style="width: 100%;"></td>
+                <td><button type="button" class="eliminar-f3 buton-eliminar-formatos" >x</button></td>
+              </tr>
+              {%endif%}
+            </tbody>
+          </table>
+           <button type="button" style="border-radius: 0.25rem; border: none; background-color: #5d1f3f; color: white; margin-bottom: 1rem;" id="boton-f3">Agregar más</button>
+        </div>
+        <div>
+        <button type="button" class="btn btn-warning" name="guardar_formato_tres" id ="guardar_formato_tres" style="margin-bottom: 2rem;">Guardar formato 3</button>
+      </div>
+      </div>
+      <!-- formato 4-->
+       <div>
+        <div>
+          <b style="font-size: 25px !important;"> Formato 4: Criterios para la focalización de la población objetivo</b><br><br>
+        </div>
+        <div>
+          <table class="my-table table tabla-bordes-punteados" id="formatocuatro">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 33.3% !important; background-color: #c2995cd7 !important;">Criterio</th>
+                <th scope="col" style="width: 33.3% !important; background-color: #c2995cd7 !important;">Descripción del criterio</th>
+                <th scope="col" style="width: 33.3% !important; background-color: #c2995cd7 !important;">Justificación de la elección</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="text" id="criterio_ni_formato4_1" style="width: 100%;" value="Nivel de ingreso" readonly></td>
+                <td>
+                  <input type="text" name="descripcion_nivel_ingreso" placeholder="Descripción" id="descripcion_ni_formato4_1" style="width: 100%;" value="{{ formato4.descripcion_nivel_ingreso|default:'' }}">
+                </td>
+                <td>
+                  <textarea name="justificacion_nivel_ingreso" placeholder="Justificación" id="justificacion_ni_formato4_1" style="width: 100%; border: none;">{{ formato4.justificacion_nivel_ingreso|default:'' }}</textarea>
+                </td>
+              </tr>
+
+              <tr>
+                <td><input type="text" id="criterio_sexo_formato4_1" style="width: 100%;" value="Sexo" readonly></td>
+                <td>
+                  <input type="text" name="descripcion_sexo" placeholder="Descripción" id="descripcion_sexo_formato4_1" style="width: 100%;" 
+                        value="{{ formato4.descripcion_sexo|default:'' }}">
+                </td>
+                <td>
+                  <textarea name="justificacion_sexo" placeholder="Justificación" id="justificacion_sexo_formato4_1" style="width: 100%; border: none;">{{ formato4.justificacion_sexo|default:'' }}</textarea>
+                </td>
+              </tr>
+
+              <tr>
+                <td><input type="text" id="criterio_ge_formato4_1" style="width: 100%;" value="Grupo etario" readonly></td>
+                <td>
+                  <input type="text" name="descripcion_grupo_etario" placeholder="Descripción" id="descripcion_ge_formato4_1" style="width: 100%;" 
+                        value="{{ formato4.descripcion_grupo_etario|default:'' }}">
+                </td>
+                <td>
+                  <textarea name="justificacion_grupo_etario" placeholder="Justificación" id="justificacion_ge_formato4_1" style="width: 100%; border: none;">{{ formato4.justificacion_grupo_etario|default:'' }}</textarea>
+                </td>
+              </tr>
+
+              <tr>
+                <td><input type="text" id="criterio_chli_formato4_1" style="width: 100%;" value="Condición del hablante de lengua indígena" readonly></td>
+                <td>
+                  <input type="text" name="descripcion_lengua_indigena" placeholder="Descripción" id="descripcion_chli_formato4_1" style="width: 100%;" 
+                        value="{{ formato4.descripcion_lengua_indigena|default:'' }}">
+                </td>
+                <td>
+                  <textarea name="justificacion_lengua_indigena" placeholder="Justificación" id="justificacion_chli_formato4_1" style="width: 100%; border: none;">{{ formato4.justificacion_lengua_indigena|default:'' }}</textarea>
+                </td>
+              </tr>
+
+              <tr>
+                <td><input type="text" id="criterio_ug_formato4_1" style="width: 100%;" value="Ubicación geográfica" readonly></td>
+                <td>
+                  <input type="text" name="descripcion_ubicacion_geografica" placeholder="Descripción" id="descripcion_ug_formato4_1" style="width: 100%;" 
+                        value="{{ formato4.descripcion_ubicacion_geografica|default:'' }}">
+                </td>
+                <td>
+                  <textarea name="justificacion_ubicacion_geografica" placeholder="Justificación" id="justificacion_ug_formato4_1" style="width: 100%; border: none;">{{ formato4.justificacion_ubicacion_geografica|default:'' }}</textarea>
+                </td>
+              </tr>
+
+              <tr>
+                <td><input type="text" id="criterio_oc_formato4_1" style="width: 100%;" value="Otros criterios" readonly></td>
+                <td>
+                  <input type="text" name="descripcion_otros_criterios" placeholder="Descripción" id="descripcion_oc_formato4_1" style="width: 100%;" 
+                        value="{{ formato4.descripcion_otros_criterios|default:'' }}">
+                </td>
+                <td>
+                  <textarea name="justificacion_otros_criterios" placeholder="Justificación" id="justificacion_oc_formato4_1" style="width: 100%; border: none;">{{ formato4.justificacion_otros_criterios|default:'' }}</textarea>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!--Boton-->
+      <div>
+        <button type="button" class="btn btn-warning" name="guardar_formato_cuatro" id ="guardar_formato_cuatro">Guardar formato 4</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!--ARBOL DE PROBLEMAS-->
+<div class="tab-content" id="ap">
+	<div class="tab-pane fade show" id="ap-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;"> Árbol de Problemas</b><br><br>
+    {% if problema_central_existente%}
+    <form method="POST" id="form-AP-done">
+      {% csrf_token %}
+        <p>Para visualizar el árbol anteriormente creado da click en el boton: </p>
+        <button type="button" class="btn btn-info" id="visulizar-diag" style="margin-bottom: 1rem;">Visualizar diagrama guardado</button>
+          <div id="tree-data-ap" style="display: none;">
+            <!-- Aquí se inyectarán los datos dinámicamente -->
+          <pre>{{ tree_data_json|json_script:"problemas-data" }}</pre>
+          </div>
+          <div class="hidder" id="hidder-uno">
+            <div class="boton-container">
+              <button type="button" class="btn btn-dark" id="add-causes-indirectas">Agregar Causa Indirecta</button>
+              <button type="button" class="btn btn-dark" id="add-causa-directa">Agregar Causa Directa</button>
+              <button type="button" class="btn btn-dark" id="add-efecto-directo">Agregar Efecto Directo</button>
+              <button type="button" class="btn btn-dark" id="add-efecto-indirecto">Agregar Efecto Indirecto</button>
+              <button type="button" class="btn btn-warning" id="guardar_detalles_arbol">Guardar Diagrama</button>
+            </div>
+            <div id="container">
+              <button type="button" class="reset-btn" id="reset-btn">Reset vista</button>
+              <div class="canvas" id="diagramContainer"></div>
+              <button type="button" class="zoom"  id="zoom-in">-</button>
+              <button type="button" class="zoom" style="left: 50px !important"  id="zoom-out">+</button>
+            </div>
+          </div>
+    </form>
+    {% else %}
+    <form method="POST" id="form">
+      {% csrf_token %}
+      <div class="boton-container">
+        <button type="button" class="btn btn-dark" id="add-causes-indirectas">Agregar Causa Indirecta</button>
+        <button type="button" class="btn btn-dark" id="add-causa-directa">Agregar Causa Directa</button>
+        <button type="button" class="btn btn-dark" id="add-efecto-directo">Agregar Efecto Directo</button>
+        <button type="button" class="btn btn-dark" id="add-efecto-indirecto">Agregar Efecto Indirecto</button>
+        <button type="button" class="btn btn-warning" id="guardar_detalles_arbol">Guardar Diagrama</button>
+      </div>
+      <div id="container">
+        <button type="button" class="reset-btn" id="reset-btn">Centrar vista</button>
+        <div class="canvas" id="diagramContainer"></div>
+        <button type="button" class="zoom"  id="zoom-in">-</button>
+        <button type="button" class="zoom" style="left: 50px !important"  id="zoom-out">+</button>
+      </div>
+    </form> 
+    {%endif%}
+  </div>
+</div>
+
+<!--ARBOL DE OBJETIVOS-->
+<div class="tab-content" id="ao">
+  <div class="tab-pane fade show" id="ao-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;"> Árbol de objetivos</b><br><br> 
+    <pre>{{ arbol_objetivos|json_script:"objetivos-data"}}</pre>
+    {% if solucion_problema_existente%}
+    <h4>Da click en el boton para visualizar tu Árbol previamente guardado</h4>
+    <div class="warning-box">
+      <span>Para visualizar la última versión, actualice su navegador!</span>
+    </div>
+    {% else %}
+    <div class="alert alert-success">
+      <h4>Para generar el Árbol de Objetivos primero debe guardarse el Árbol de Problemas</h4>
+      <h5>Se genera una sugerencia en automático, si desea dejarla dé click en guardar</h5>
+      <div class="warning-box">
+      <span>Para visualizar la última versión, actualice su navegador!</span>
+    </div>
+    </div>
+    {%endif%}
+    <div class="boton-container">
+      <button type="button" id ="AO-sug" class="btn btn-info" >Ver sugerencia del Árbol de objetivos</button>
+      <button type="button" class="btn btn-warning" id="guardar_detalles_arbol_obj">Guardar Diagrama</button>
+    </div>
+    <div id="container-ao">
+      <button type="button" class="reset-btn" id="reset-btn-ao">Centrar vista</button>
+        <div class="canvas" id="diagramContainer-ao"></div>
+        <button type="button" class="zoom"  id="zoom-in-ao">-</button>
+        <button type="button" class="zoom" style="left: 50px !important"  id="zoom-out-ao">+</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--POBLACIÓN OBJETIVO-->
+<div class="tab-content" id="po">
+	<div class="tab-pane fade show" id="po-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;"> Formato 5: Identificación y cuantificación de la población objetivo </b><br><br>
+		<form method="POST" id="formato-5"> 
+      {% csrf_token %}
+        <table class="my-table table tabla-bordes-punteados">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 25% !important;background-color: #5d1f3f !important; color: white !important;">Tipo</th>
+              <th scope="col" style="width: 25% !important; background-color: #5d1f3f !important; color: white !important;">Descripción</th>
+              <th scope="col" style="width: 3% !important; background-color: #5d1f3f !important; color: white !important;">Hombres</th>
+              <th scope="col" style="width: 3% !important; background-color: #5d1f3f !important; color: white !important;">Mujeres</th>
+              <th scope="col" style="width: 3% !important; background-color: #5d1f3f !important; color: white !important;">Hablantes de lengua indigena</th>
+              <th scope="col" style="width: 3% !important; background-color: #5d1f3f !important; color: white !important;">Grupos de edad</th>
+              <th scope="col" style="width: 10% !important; background-color: #5d1f3fcc !important; color: white !important;">Otros criterios: Descripción</th>
+              <th scope="col" style="width: 3% !important; background-color: #5d1f3fcc !important; color: white !important;">Otros criterios: Cuantificación</th>
+              <th scope="col" style="width: 25% !important; background-color: #5d1f3f !important; color: white !important;">Medios de verificación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th><b>Población de referencia</b></th>
+              <td><textarea name="descripcion_referencia" placeholder="Escribir..."  style="width: 100%;">{{ poblaciones.referencia.descripcion }}</textarea></td>
+              <td><input type="number" placeholder="0" name="hombres_referencia" value="{{ poblaciones.referencia.hombres }}" ></td>
+              <td><input type="number" placeholder="0" name="mujeres_referencia" value="{{ poblaciones.referencia.mujeres }}" ></td>
+              <td><input type="number" placeholder="0" name="hablantes_referencia" value="{{ poblaciones.referencia.hablantes_lengua }}" ></td>
+              <td><textarea  placeholder="0" name="grupos_edad_referencia" >{{ poblaciones.referencia.grupos_edad }} </textarea></td>
+              <td><input type="text" placeholder="otros" name="otros_referencia" value="{{ poblaciones.referencia.otros }}"></td>
+              <td><input type="number" placeholder="0" name="cuanti_referencia" value="{{ poblaciones.referencia.cuantificacion }}"></td>
+              <td><textarea name="medios_referencia" placeholder="fuente" style="width: 100%;">{{ poblaciones.referencia.medios_verificacion }}</textarea></td>
+            </tr>
+            <tr>
+              <th> <b>Población potencial o afectada</b></th>
+              <td><textarea  name="descripcion_potencial" placeholder="Escribir..." style="width: 100%;">{{ poblaciones.potencial.descripcion }}</textarea></td>
+              <td><input type="number" placeholder="0" name="hombres_potencial" value="{{ poblaciones.potencial.hombres }}"></td>
+              <td><input type="number"  placeholder="0" name="mujeres_potencial" value="{{ poblaciones.potencial.mujeres }}"></td>
+              <td><input type="number"  placeholder="0" name="hablantes_potencial" value="{{ poblaciones.potencial.hablantes_lengua }}"></td>
+              <td><textarea placeholder="0"  name="grupos_edad_potencial">{{ poblaciones.potencial.grupos_edad }}</textarea></td>
+              <td><input type="text" placeholder="otros" name="otros_potencial" value="{{ poblaciones.potencial.otros }}"></td>
+              <td><input type="number" placeholder="0" name="cuanti_potencial" value="{{ poblaciones.potencial.cuantificacion }}"></td>
+              <td><textarea placeholder="fuente" name="medios_potencial" style="width: 100%;">{{ poblaciones.potencial.medios_verificacion }}</textarea></td>
+            </tr>
+            <tr>
+              <th> <b>Población objetivo </b></th>
+              <td><textarea name="descripcion_objetivo" placeholder="Escribir..."  value="" style="width: 100%;">{{ poblaciones.objetivo.descripcion }}</textarea></td>
+              <td><input type="number" placeholder="0" name="hombres_objetivo" value="{{ poblaciones.objetivo.hombres }}"></td>
+              <td><input type="number" placeholder="0" name="mujeres_objetivo" value="{{ poblaciones.objetivo.mujeres }}"></td>
+              <td><input type="number" placeholder="0" name="hablantes_objetivo" value="{{ poblaciones.objetivo.hablantes_lengua }}"></td>
+              <td><textarea placeholder="0" name="grupos_edad_objetivo">{{ poblaciones.objetivo.grupos_edad }}</textarea></td>
+              <td><input type="text" placeholder="otros" name="otros_objetivo" value="{{ poblaciones.objetivo.otros }}"></td>
+              <td><input type="number" placeholder="0" name="cuanti_objetivo" value="{{ poblaciones.objetivo.cuantificacion }}"></td>
+              <td><textarea  placeholder="fuente" name="medios_objetivo" style="width: 100%;">{{ poblaciones.objetivo.medios_verificacion }}</textarea></td>
+            <tr>
+              <th> <b>Población postergada</b></th>
+              <td><textarea  name="descripcion_postergada" placeholder="Escribir..."  style="width: 100%;">{{ poblaciones.postergada.descripcion }}</textarea></td>
+              <td><input type="number" placeholder="0"  name="hombres_postergada" value="{{ poblaciones.postergada.hombres }}"></td>
+              <td><input type="number" placeholder="0" name="mujeres_postergada" value="{{ poblaciones.postergada.mujeres }}"></td>
+              <td><input type="number" placeholder="0" name="hablantes_postergada" value="{{ poblaciones.postergada.hablantes_lengua  }}"></td>
+              <td><textarea placeholder="0" name="grupos_edad_postergada" >{{ poblaciones.postergada.grupos_edad }}</textarea></td>
+              <td><input type="text" placeholder="otros" name="otros_postergada" value="{{ poblaciones.postergada.otros }}"></td>
+              <td><input type="number" placeholder="0" name="cuanti_postergada" value="{{ poblaciones.postergada.cuantificacion }}"></td>
+              <td><textarea  placeholder="fuente" name="medios_postergada"  style="width: 100%;">{{ poblaciones.postergada.medios_verificacion }}</textarea></td>
+            </tr> 
+          </tbody>
+        </table>
+      <div>
+        <button type="button" class="btn btn-warning" id="guardar_poblacion_objetivo" name="guardar_poblacion_objetivo" style="margin-top: 2rem;">Guardar formato 5</button>
+      </div>
+    </form>
+    <br>
+     <b style="font-size: 25px !important;"> Formato 6: Cobertura geográfica </b><br><br>
+     <form method="POST" id="formato-6">
+      <table class="my-table table tabla-bordes-punteados" id="table-formato-6">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 15% !important; background-color: #c2995cd7 !important;">Nombre del Municipio</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;" >Número de localidades</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;">Población total</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important; cursor: context-menu;" data-bs-toggle="tooltip"data-bs-placement="top" title="Número = suma de las columnas de número de habitantes por tamaño de localidad">Cuantificación </th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;">De hasta 500 Habitantes</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;">5001 -2,500</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;">2,501 - 10,000</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;">10,001 - 15,000</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;">15,000 - 49,999</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;"> + 50,000</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;">% Población Rural</th>
+            <th scope="col" style="width: 7.7% !important; background-color: #c2995cd7 !important;">% Población Urbana</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for municipio in municipios %}
+            {% with datos=formato6|get_item:municipio.id_municipio %}
+          <tr>
+            <td>{{ municipio.municipio }}</td>
+            <td><input type="number" placeholder="0" id="localidades_{{ municipio.municipio }}" name="localidades" value="{{ datos.localidades }}" style="width: 100%; border: none;"></td>
+            <td>{{ municipio.poblacion |intcomma }}</td>
+            <td><a name="cuantificacion_general" id="cuantificacion_general_{{ municipio.municipio }}">{{ datos.cuantificacion_general | intcomma}}</a></td>
+            <td><input type="number" id="tipo1_{{ municipio.municipio }}" name="tipo1" value="{{ datos.tipo1|default:0|floatformat:0   }}" style="width: 100%; border: none;" placeholder="0" required min="0"></td>
+            <td><input type="number" id="tipo2_{{ municipio.municipio }}" name="tipo2" value="{{ datos.tipo2|default:0  }}" style="width: 100%; border: none;" placeholder="0" required min="0"></td>
+            <td><input type="number" id="tipo3_{{ municipio.municipio }}" name="tipo3" value="{{ datos.tipo3|default:0  }}" style="width: 100%; border: none;" placeholder="0" required min="0"></td>
+            <td><input type="number" id="tipo4_{{ municipio.municipio }}" name="tipo4" value="{{ datos.tipo4|default:0  }}" style="width: 100%; border: none;" placeholder="0" required min="0"></td>
+            <td><input type="number" id="tipo5_{{ municipio.municipio }}" name="tipo5" value="{{ datos.tipo5|default:0  }}" style="width: 100%; border: none;" placeholder="0" required min="0"></td>
+            <td><input type="number" id="tipo6_{{ municipio.municipio }}" name="tipo6" value="{{ datos.tipo6|default:0  }}" style="width: 100%; border: none;" placeholder="0" required min="0"></td>
+            <td><a id="porcentaje1_{{ municipio.municipio }}" name="porcentaje1">{{ datos.porcentaje1 }}</a></td>
+            <td><a id="porcentaje2_{{ municipio.municipio }}" name="porcentaje2">{{ datos.porcentaje2 }}</a></td>
+          </tr>
+        {% endwith %}
+        {% endfor %}
+        </tbody>
+      </table>
+      <div>
+        <button type="button" class="btn btn-warning" id="guardar_formato_seis" name="guardar_formato_seis" style="margin-top: 2rem;">Guardar formato 6</button>
+      </div>
+     </form>
+  </div>
+</div>
+
+<!--ALINEACION AL PLAN ESTATAL DE DESARROLLO-->
+<div class="tab-content" id="aped">
+	<div class="tab-pane fade show" id="aped-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    {% if aped_existe%}
+    <script>
+      const estructura_aped = {{ estructura_aped|safe }};
+    </script>
+    {%endif%}
+    <b style="font-size: 25px !important;"> Formato 7: Alineación al Plan Estatal de Desarrollo </b><br><br>
+      <div class="card" style="margin-bottom: 1rem;" name="formato-7" id="formato-7">
+        <div class="card-body">
+          <form method="POST">
+            {% csrf_token %}
+            <div>
+              <div class="mb-3">
+                <label class="form-label" for="directriz" >Directriz</label>
+                <select class="form-select" id="directriz" name="directriz">
+                  <option value="value">Seleccione una directriz</option>
+                  <option value="1 Gobierno Honesto, Humanista y Cercano al Pueblo.">1 Gobierno Honesto, Humanista y Cercano al Pueblo.</option>
+                  <option value="2 Bienestar Social para la Salud de Todas y Todos.">2 Bienestar Social para la Salud de Todas y Todos.</option>
+                  <option value="3 Educación, Cultura y Deporte Pilares del Renacimiento.">3 Educación, Cultura y Deporte Pilares del Renacimiento.</option>
+                  <option value="4 Economía con Prosperidad Compartida y Rescate del Campo.">4 Economía con Prosperidad Compartida y Rescate del Campo.</option>
+                  <option value="5 Infraestructura para un Desarrollo Territorial Ordenado y Sostenible.">5 Infraestructura para un Desarrollo Territorial Ordenado y Sostenible.</option>
+                  <option value="6 Justicia, Seguridad Ciudadana y Cultura de la Paz.">6 Justicia, Seguridad Ciudadana y Cultura de la Paz.</option>
+                  <option value="7 Pueblo Maya Raíz y Razón de Ser.">7 Pueblo Maya Raíz y Razón de Ser.</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label"  for="vertiente">Vertiente</label>
+                <select class="form-select" id="vertiente" name="vertiente">
+                    <option value="">Selecciona una vertiente</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label"  for="objetivo_estrategico">Objetivo estratégico</label>
+                <select class="form-select"  id="objetivo_estrategico" name="objetivo_estrategico">
+                    <option value="">Selecciona un Objetivo estratégico</option>
+                </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="objetivo_especifico">Objetivo específico</label>
+              <div id="objetivo_especifico">
+                <!-- Checkboxes para Objetivos Específicos se agregarán dinámicamente aquí -->
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="linea_accion">Línea de acción</label>
+              <div id="linea_accion">
+                <!-- Checkboxes para Líneas de Acción se agregarán dinámicamente aquí -->
+              </div>
+            </div>
+          </form>
+        </div>
+        </div>
+      </div>
+      <div>
+        <button type="button" id="agregar-f7" name="agregar-f7" style="border-radius: 0.25rem; border: none; background-color: #5d1f3f; color: #f8f9fa; margin-top: 2rem;" >Agregar más</button>
+      </div>
+      <div>
+        <button type="button" class="btn btn-warning" id="guardar_aped" name="guardar_aped" style="margin-top: 1rem;" >Guardar</button>
+      </div>
+  </div>
+</div>
+
+<!--CARACTERISTICAS DE LOS BIENES Y SERVICIOS-->
+<div class="tab-content" id="bys">
+	<div class="tab-pane fade show" id="bys-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+   <script>
+    const bienesServiciosGuardados = {{ bienes_servicios_guardados|safe }};
+  </script>
+    <form method="POST">
+      {% csrf_token %}
+		<b style="font-size: 25px !important;"> Formato 8: Características de los bienes y/o servicios del programa</b><br><br>
+    <div id="contenedores-bys">
+    <div class="card" id="bos-conteiner-1" style="margin-bottom: 1rem;">
+      <div class="card-body">
+          <div class="mb-3">
+              <label class="form-label" >Bien o servicio</label>
+            <input type="text" class="form-control" id="bos" name="bien_1" placeholder="Bien o servicio" />
+          </div>
+            <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label" >Descripción del bien o servicio</label>
+                <textarea rows="3" cols="60" type="text" class="form-control" id="desc" name="descr_1"  placeholder="Descripción"> </textarea>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Criterios de calidad</label>
+                <textarea rows="3" cols="60" type="text" class="form-control" id="crit" name="critcalidad_1" placeholder="Criterios de calidad"> </textarea>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Criterios para determinar la entrega oportuna</label>
+                <textarea rows="3" cols="60" type="text" class="form-control" id="criteo" name="criteo_1" placeholder="Criterios Entrega oportuna"> </textarea>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+    <button type="button" id="agregar-btn" class="btn btn-success hstack gap-6" onclick=agregarB() >Agregar más</button>
+    <div>
+      <button type="button" class="btn btn-warning" id="guardar_bys" name="guardar_bys" style="margin-top: 2rem;" >Guardar</button>
+    </div>
+  </form>
+  </div>
+</div>
+
+<!--MATRIZ DE INDICADORES-->
+<div class="tab-content" id="mir" >
+	<div class="tab-pane fade show" id="mir-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <script>
+      const datosMIR = JSON.parse('{{ datos_mir_json|escapejs }}');
+    </script>
+		<form method="POST">
+      <b style="font-size: 25px !important;"> Formato 10: Matriz de indicadores</b><br><br>
+      {% csrf_token %}
+        <!-- Fin -->
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white" style="background-color:black !important">Fin</div>
+          <div class="card-body">
+            <label style="color: black !important;"> Objetivo</label>
+            <input type="text" class="form-control mb-2" name="fin_objetivo" id="fin_objetivo">
+
+            <label style="color: black !important;" >Indicadores</label>
+            <input type="text" class="form-control mb-2" name="fin_indicador" id="fin_indicador">
+
+            <label style="color: black !important;">Supuestos</label>
+            <input type="text" class="form-control" name="fin_supuestos" id = "fin_supuestos">
+
+            <label style="color: black !important; margin-top: 0.5rem !important;  display: block; margin-bottom: 0px !important;">Medio de verificación</label>
+            <a style="color: gray !important; font-size: 0.8rem;  display: block;" ><i>En este campo se visualizará lo capturado en el formato 11</i></a><br>
+            <a name="fin_verificacion" id ="fin_verificacion"> </a>
+          </div>
+        </div>
+
+        <!-- Propósito -->
+        <div class="card mb-4"  style="border: 2px solid #800040;">
+          <div class="card-header text-white" style="background-color: #800040;">
+            Propósito
+          </div>
+          <div class="card-body">
+            <label style="color: black !important;"><strong>Objetivo</strong></label>
+            <input type="text" class="form-control mb-2" name="proposito_objetivo">
+            
+            <div id="indicadores-proposito">
+              <!-- Indicadores fijos -->
+              <div class="indicador-block mb-3 p-3 border rounded" style="background-color: #f8f9fa;">
+                <div class="row">
+                  <div class="col-md-12 text-end">
+                    <!-- Botón de eliminar deshabilitado para los primeros dos indicadores -->
+                  </div>
+                </div>
+                <label style="color: black !important;" >Indicador 1:</label>
+                <input type="text" class="form-control mb-2" name="proposito_indicador_1">
+            
+                <label style="color: black !important;" >Supuesto 1:</label>
+                <input type="text" class="form-control mb-2" name="proposito_supuesto_1">
+
+                <label style="color: black !important;  display: block; margin-bottom: 0px !important;" >Medio de verificación 1:</label>
+                <a style="color: gray !important; font-size: 0.8rem;  display: block;" ><i>En este campo se visualizará lo capturado en el formato 11</i></a><br>
+                <a type="text" name="proposito_mverificacion_1" id="proposito_mverificacion_1"></a>
+              </div>
+          </div>
+            <button type="button" class="btn btn-success mt-3" onclick="agregarIndicadorProposito()" style="width: 8rem !important; margin-bottom: 1rem; margin-left: 1rem;">+ Indicador</button>
+          </div>
+        </div>
+        
+        <!-- COMPONENTES -->
+        <div class="mb-4" id="componentes-container">
+          <!-- COMPONENTE 1 (estático) -->
+          <div class="card mb-4" data-componente="1">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between">
+              <h5>Componente 1</h5>
+            </div>
+            <div class="card-body">
+              <label style="color: black !important;" >Objetivo del componente:</label>
+              <input type="text" class="form-control mb-3" name="componente_1_objetivo">
+
+              <h6>Indicadores del componente</h6>
+              <div id="indicadores-componente-1" data-indicadores-count="1">
+                <div class="mb-3 border p-2 bg-light" data-indicador="1">
+                  <label style="color: black !important;" >Indicador 1:</label>
+                  <input type="text" class="form-control mb-2" name="componente_1_indicador_1_nombre">
+                  <label style="color: black !important;" >Supuesto 1:</label>
+                  <input type="text" class="form-control mb-2" name="componente_1_indicador_1_supuesto">
+
+                  <label style="color: black !important; display: block; margin-bottom: 0px !important;" >Medio de verificación 1:</label>
+                  <a style="color: gray !important; font-size: 0.8rem;  display: block;" ><i>En este campo se visualizará lo capturado en el formato 11</i></a><br>
+                  <a type="text" name="componente_1_indicador_1_medio"></a>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-success mb-3" onclick="agregarIndicador(1)">+ Indicador</button>
+
+              <h6 style="color: black !important;"><strong>Actividades</strong></h6>
+              <div  id="actividades-componente-1" >
+                <div class="mb-3 border p-2 bg-light" data-actividad="1" style="background-color: #cdcaca !important;  border-radius: 0.5rem !important;">
+                  <h6><strong>Actividad 1.1</strong></h6>
+                  <label>Objetivo:</label>
+                  <input type="text" class="form-control mb-2" name="componente_1_actividad_1_objetivo">
+                  <div data-indicador="C1_A1"  id="indicadores-actividad-1-1" class="mb-3 border p-2 bg-light" style="background-color: #cdcaca !important; border-radius: 0.5rem !important;" >
+                     <div data-indicador-act="1">
+                      <label>Indicador 1:</label>
+                      <input type="text" class="form-control mb-2" name="componente_1_actividad_1_indicador_1_nombre">
+                      <label>Supuesto 1:</label>
+                      <input type="text" class="form-control mb-2" name="componente_1_actividad_1_indicador_1_supuesto">
+                      <label style="display: block; margin-bottom: 0px !important;">Medio de verificación 1:</label>
+                      <a style="color: gray !important; font-size: 0.8rem;  display: block;" ><i>En este campo se visualizará lo capturado en el formato 11</i></a><br>
+                      <a type="text" name="componente_1_actividad_1_indicador_1_medio"></a>
+                    </div> 
+                  </div>
+                  <button type="button" class="btn btn-sm btn-success mb-3" onclick="agregarIndicadorActividad(1, 1)">+ Indicador</button>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-warning" id="botonAA" onclick="agregarActividad(1)">+ Actividad</button>
+              </div>
+            </div>
+          <div class="col-md-12">
+            <button type="button" class="btn btn-secondary" style="width: 8rem;" id="botonAIC" onclick="agregarComponente()">+ Componente</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-warning" id="guardar_mir" name="guardar_mir" style="margin-top: 2rem !important;" >Guardar</button>
+    </form>
+  </div>
+</div>
+<!-- FICHA TECNICA DE INDICADOR NIVEL FIN -->
+<div class="tab-content" id="if">
+	<div class="tab-pane fade show" id="if-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <script>
+      const  datos_ficha_fin= JSON.parse('{{ datos_ficha_fin|escapejs }}');
+    </script>
+    
+    <b style="font-size: 25px !important;">Ficha Técnica  de Indicadores - Fin</b><br>
+    <form method="POST" style="width: 80%; display: inline-block; justify-content: center;" >
+      {% csrf_token %}
+      <div class="row ficha" id = "ficha_fin_uno">
+          <div class="col-4"> 
+            <strong>Objetivo: </strong>
+          </div>
+          <div class="col-8"> 
+            <p><span style="color: #565656 !important;" id="objetivo_fin"></span></p>
+          </div>
+          <div class="col-4"> 
+            <strong>Nombre del indicador: </strong>
+          </div>
+          <div class="col-8"> 
+            <p><span style="color: #565656   !important;" id="indicador_fin"></span></p>
+          </div>
+      </div>
+      <br>
+      <div class="row mb-3" style="background-color: #800040; margin-bottom: 0px !important;">
+        <div class="col-12">
+            <h5 style="color: white;">Metadatos del indicador</h5>
+        </div>
+      </div>
+      <div class="row ficha" id = "ficha_fin_dos">
+        <div class="col-4"> 
+          <strong>Definición: </strong>
+        </div>
+        <div class="col-8"> 
+          <input type="text" id="fin_definicion" name="fin_definicion" placeholder="Escribe la definición" style="border: none !important; width: 100%;">
+        </div>
+        <div class="col-4"> 
+          <strong>Tipo de Indicador: </strong>
+        </div>
+        <div class="col-8"> 
+          <select class="form-select" name="fin_tipo_indicador" id="fin_tipo_indicador" style="border: none !important; color: black !important; font-size: 1rem; padding-left: 0px !important;">
+            <option value="Porcentaje">Porcentaje</option>
+            <option value="Tasa">Tasa</option>
+            <option value="Variacion">Variación porcentual</option>
+            <option value="Razon">Razón</option>
+            <option value="Promedio">Promedio</option>
+            <option value="Diferencia">Diferencia</option>
+            <option value="Indice">Índice</option>
+            <option value="Conteo">Conteo</option>
+            <option value="Lugar">Lugar</option>
+            <option value="Nivel">Nivel</oNivelption>
+            <option value="promedio_variaciones">Promedio móvil de las variaciones de tres años</option>
+            <option value="promedio_tresaños">Promedio móvil de tres años</option>
+            <option value="Sumatoria">Sumatoria</option>
+          </select>
+        </div>
+        <div class="col-4"> 
+          <strong>Tipo de algoritmo: </strong>
+        </div>
+        <div class="col-8"> 
+          <p id="fin_tipo_algoritmo" ></p>
+        </div>
+        <div class="col-4"> 
+          <strong>Periodicidad de calculo: </strong>
+        </div>
+        <div class="col-8"> 
+          <select class="form-select" name="fin_periocidadcalc" id="fin_periocidadcalc" style="border: none !important; color: black !important; font-size: 1rem; padding-left: 0px !important;">
+            <option value="Mensual">Mensual</option>
+            <option value="Bimestral">Bimestral</option>
+            <option value="Trimestral">Trimestral</option>
+            <option value="Semestral">Semestral</option>
+            <option value="Anual">Anual</option>
+            <option value="Bianual">Bianual</option>
+            <option value="Trianual">Trianual</option>
+            <option value="Quinquenal">Quinquenal</option>
+            <option value="Sexenal">Sexenal</option>
+          </select>
+        </div>
+        <div class="col-4"> 
+          <strong>Tendencia: </strong>
+        </div>
+        <div class="col-8"> 
+          <select class="form-select" name="fin_tendencia" id="fin_tendencia" style="border: none !important; color: black !important; font-size: 1rem; padding-left: 0px !important;">
+            <option value="Ascendente">Ascendente</option>
+            <option value="Descendente">Descendente</option>
+            <option value="Constantes">Constantes</option>
+          </select>
+        </div>
+        <div class="col-4"> 
+          <strong>Ámbito de medición: </strong>
+        </div>
+        <div class="col-8"> 
+          <select class="form-select" name="fin_amed" id="fin_amed" style="border: none !important; color: black !important; font-size: 1rem; padding-left: 0px !important;">
+            <option>Resultados a largo plazo</option>
+            <option>Resultado de mediano plazo</option>
+            <option>Resultados de corto plazo</option>
+            <option>Servicios/bienes</option>
+            <option>Actividades</option>
+            <option>Insumos</option>
+          </select>
+        </div>
+        <div class="col-4"> 
+          <strong>Dimensión del desempeño: </strong>
+        </div>
+        <div class="col-8"> 
+          <select class="form-select" name="fin_dimdesp" id="fin_dimdesp" style="border: none !important; color: black !important; font-size: 1rem; padding-left: 0px !important;">
+            <option>Eficacia</option>
+            <option>Eficiencia</option>
+            <option>Calidad</option>
+            <option>Economía</option>
+          </select>
+        </div>
+      </div>
+      <br>
+      <div class="row mb-3" style="background-color: #800040; margin-bottom: 0px !important;">
+        <div class="col-12">
+            <h5 style="color: white;">Variables</h5>
+        </div>
+      </div>
+      <div class="row ficha" id = "ficha_fin_tres">
+        <div class="vars" id="fin_variables" style="margin: 0xp !important;">
+          <!-- Aqui irian las columnas-->
+        </div>
+      </div>
+      <br>
+      <div class="row mb-3" style="background-color: #800040; margin-bottom: 0px !important;">
+        <div class="col-12">
+            <h5 style="color: white;">Línea base o valor de referencia</h5>
+        </div>
+      </div>
+      <div class="row ficha" id = "ficha_fin_cuatro">
+        <div class="vars" id="fin_lbvr" style="margin: 0xp !important;">
+          <!-- Aqui irian las columnas-->
+        </div>
+      </div>
+      <br>
+      <div class="row mb-3" style="background-color: #800040; margin-bottom: 0px !important;">
+        <div class="col-12">
+            <h5 style="color: white;">Meta</h5>
+        </div>
+      </div>
+      <div class="row ficha" id = "ficha_fin_cinco">
+        <div class="vars" id="fin_meta" style="margin: 0xp !important;">
+          <!-- Aqui irian las columnas-->
+        </div>
+      </div>
+  </form>
+  <div class="guardadofichas">
+    <a>Nota: Para poder guardar las fichas técnicas de indicadores, es necesario haber guardado previamente la MIR.</a>
+    <button type="button" class="btn btn-warning" id="guardar_ff" name="guardar_ff" >Guardar</button>
+  </div>
+  </div>
+</div>
+
+<!-- FICHA TECNICA DE INDICADOR NIVEL PROPOSITO -->
+<div class="tab-content" id="ip">
+	<div class="tab-pane fade show" id="ip-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;">Ficha Técnica  de Indicadores - Próposito</b><br>
+    <script>
+      const  datos_fichas_proposito= JSON.parse('{{ datos_fichas_proposito|escapejs }}');
+    </script>
+    <form method="POST">
+      {% csrf_token %}      
+      <!-- Contenedor donde se renderizarán los datos -->
+      <div id="estructura-proposito-container">
+      </div>
+  </form>
+  <div class="guardadofichas">
+    <a>Nota: Para poder guardar las fichas técnicas de indicadores, es necesario haber guardado previamente la MIR.</a>
+    <button type="button" class="btn btn-warning" id="guardar_fp" name="guardar_fp" >Guardar</button>
+  </div>
+  </div>
+</div>
+
+<!-- FICHA TECNICA DE INDICADOR NIVEL COMPONENTE -->
+<div class="tab-content" id="ic">
+	<div class="tab-pane fade show" id="ic-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;">Ficha Técnica  de Indicadores - Componente</b><br>
+    <script>
+      const  datos_fichas_componente= JSON.parse('{{ datos_fichas_componente|escapejs }}');
+    </script>
+    <form method="POST">
+      {% csrf_token %}
+      <div id="estructura-componente-container">
+      </div>
+  </form>
+  <div class="guardadofichas">
+    <a>Nota: Para poder guardar las fichas técnicas de indicadores, es necesario haber guardado previamente la MIR.</a>
+    <button type="button" class="btn btn-warning" id="guardar_fc" name="guardar_fc" >Guardar</button>
+  </div>
+  </div>
+</div>
+<!-- FICHA TECNICA DE INDICADOR NIVEL ACTIVIDADES -->
+<div class="tab-content" id="ia">
+	<div class="tab-pane fade show" id="ia-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;">Ficha Técnica  de Indicadores - Actividad</b><br>
+    <script>
+      const  datos_fichas_actividad= JSON.parse('{{ datos_fichas_actividad|escapejs }}');
+    </script>
+    <form method="POST">
+      {% csrf_token %}
+      <div id="estructura-actividad-container">
+      </div>
+  </form>
+  <div class="guardadofichas">
+    <a>Nota: Para poder guardar las fichas técnicas de indicadores, es necesario haber guardado previamente la MIR.</a>
+    <button type="button" class="btn btn-warning" id="guardar_fa" name="guardar_fa" >Guardar</button>
+  </div>
+  </div>
+</div>
+<!-- FORMATO 12 FUENTES DE INFORMACIÓN -->
+<div class="tab-content" id="fi">
+	<div class="tab-pane fade show" id="fi-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;">Formato 12: Fuentes de información</b><br>
+    <div class="warning-box">
+      <span>Para visualizar la última versión, actualice su navegador!</span>
+    </div>
+  <div>
+    <table class="my-table table tabla-bordes-punteados" id="tabla-formato-12">
+      <thead>
+        <tr>
+          <th scope="col" style="width: 11% !important; background-color: #5d1f3f !important; color: white !important;">Nombre del Indicador</th>
+          <th scope="col" style="width: 20% !important; background-color: #5d1f3f !important; color: white !important;;" >Descripción de la variable</th>
+          <th scope="col" style="width: 20% !important; background-color: #5d1f3f !important; color: white !important;">Registro administrativo</th>
+          <th scope="col" style="width: 5% !important; background-color: #5d1f3f !important; color: white !important;">Desagreación por sexo</th>
+          <th scope="col" style="width: 11% !important; background-color: #5d1f3f !important; color: white !important;">Instrumento de recolección de información</th>
+          <th scope="col" style="width: 11% !important; background-color: #5d1f3f !important; color: white !important;">¿En qué programa informático / software tiene o tendrá su base de datos?</th>
+          <th scope="col" style="width: 11% !important; background-color: #5d1f3f !important; color: white !important;">Responsable de la producción de información</th>
+          <th scope="col" style="width: 11% !important; background-color: #5d1f3f !important; color: white !important;">Periocidad de la producción de la información</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for variable in formato12 %}
+          <tr>
+            <td>{{ variable.nombre_indicador }}</td>
+            <td>{{ variable.nombre_variable }}</td>
+            <td><textarea id="registro_{{variable.nombre_variable}}" name="registro" style="width: 100% !important;">{{ variable.registro }}</textarea></td>
+            <td><textarea id="desagregacion_{{variable.nombre_variable}}" name="desagregacion">{{ variable.desagregacion }}</textarea></td>
+            <td><textarea id="instrumentos_{{variable.nombre_variable}}" name="instrumentos">{{ variable.instrumentos }}</textarea></td>
+            <td><textarea id="programa_{{variable.nombre_variable}}" name="programa">{{ variable.programa }}</textarea></td>
+            <td><textarea id="responsable_{{variable.nombre_variable}}" name="responsable">{{ variable.responsable }}</textarea></td>
+            <td><textarea id="periodicidad_{{variable.nombre_variable}}" name="periodicidad">{{ variable.periodicidad }}</textarea></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div>
+      <button type="button" class="btn btn-warning" name="guardar_formato_doce" id ="guardar_formato_doce" style="margin-bottom: 2rem;">Guardar formato 12</button>
+    </div>
+  </div>
+</div>
+</div>
+<!-- FORMATO 13 INFORMES DE DESEMPEÑO -->
+ <div class="tab-content" id="id">
+	<div class="tab-pane fade show" id="id-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <script>
+      const formato13 = {{ datos_f13|safe }};
+    </script>
+    <b style="font-size: 25px !important;">Formato 13: Informes de desempeño</b><br><br>
+    <div>
+      <table  class="my-table table tabla-bordes-punteados" id="tabla-f13" >
+        <thead>
+          <tr>
+            <th scope="col" style="width: 24% !important; background-color: #5d1f3f !important; color: white !important;">Nombre del reporte</th>
+            <th scope="col" style="width: 25% !important; background-color: #5d1f3f !important; color: white !important;;" >Descripción general de la información reportada</th>
+            <th scope="col" style="width: 25% !important; background-color: #5d1f3f !important; color: white !important;">Periodicidad</th>
+            <th scope="col" style="width: 25% !important; background-color: #5d1f3f !important; color: white !important;">Responsable de la integración</th>
+            <th scope="col" style="width: 1% !important; background-color: #5d1f3f !important">🗑️</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a type="text" id="" style="width: 100%;">Avance trimestral de indicadores de Programas Presupuestarios</a></td>
+            <td><textarea placeholder="Descripción" name="descripcion" id="avance_descripcion" style="width: 100%;"></textarea></td>
+            <td><textarea placeholder="Periodicidad" name="periodicidad" id="avance_periodicidad" style="width: 100%; border: none;"></textarea></td>
+            <td><textarea placeholder="Responsable" name="responsable" id="avance_responsable" style="width: 100%;"></textarea></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><a type="text" id="" style="width: 100%;">Informe de Gobierno</a></td>
+            <td><textarea placeholder="Descripción" name="descripcion" id="informe_descripcion" style="width: 100%;"></textarea></td>
+            <td><textarea placeholder="Periodicidad" name="periodicidad" id="informe_periodicidad" style="width: 100%; border: none;"></textarea></td>
+            <td><textarea placeholder="Responsable" name="responsable" id="informe_responsable" style="width: 100%;"></textarea></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><input placeholder="otro" style="border: none; width: 90%;"></td>
+            <td><textarea placeholder="Descripción" name="descripcion" id="otro_descripcion_1" style="width: 100%;"></textarea></td>
+            <td><textarea placeholder="Periodicidad" name="periodicidad" id="otro_periodicidad_1" style="width: 100%; border: none;"></textarea></td>
+            <td><textarea placeholder="Responsable" name="responsable" id="otro_responsable_1" style="width: 100%;"></textarea></td>
+            <td><button type="button" class="eliminar-f13 buton-eliminar-formatos">x</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" style="border-radius: 0.25rem; border: none; background-color: #5d1f3f; color: #f8f9fa; margin-bottom: 1rem;" id="boton-f13">Agregar otro</button>
+    </div>
+    <div>
+      <button type="button" class="btn btn-warning" name="guardar_formato_trece" id ="guardar_formato_trece" style="margin-bottom: 2rem;">Guardar formato 13</button>
+    </div>
+  </div>
+</div>
+<!-- FORMATO 14 y 15 -->
+ <div class="tab-content" id="mr">
+	<div class="tab-pane fade show" id="mr-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;">Formato 14: Marco de resultados en el mediano plazo</b><br>
+    <div class="warning-box">
+      <span>Para visualizar la última versión, actualice su navegador!</span>
+    </div>
+    <table class="my-table table tabla-bordes-punteados tablatipouno" id="tabla-formato-14">
+        <thead>
+            <tr>
+                <th style="width: 8% !important;">Tipo</th>
+                <th style="width: 20% !important;">Indicador</th>
+                <th style="width: 6% !important;">Linea Base</th>
+                <th style="width: 6% !important;">2025</th>
+                <th style="width: 6% !important;">2026</th>
+                <th style="width: 6% !important;">2027</th>
+                <th style="width: 6% !important;">2028</th>
+                <th style="width: 6% !important;">2029</th>
+                <th style="width: 6% !important;">2030</th>
+                <th style="width: 30% !important;">Medios de verificación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in data_formato14 %}
+            <tr id ="{{fila.ficha.id}}">
+                <td>{{ fila.tipo }}</td>
+                <td>{{ fila.indicador }}</td>
+                <td>{{ fila.resultado }}</td>
+
+                <td><input name="meta_2025_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2025 }}"></td>
+                <td><input name="meta_2026_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2026 }}"></td>
+                <td><input name="meta_2027_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2027 }}"></td>
+                <td><input name="meta_2028_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2028 }}"></td>
+                <td><input name="meta_2029_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2029 }}"></td>
+                <td><input name="meta_2030_{{ fila.ficha.id }}" type="number" min="0" value="{{ fila.metas.2030 }}"></td>
+
+                <td>{{ fila.medios }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div>
+      <button type="button" class="btn btn-warning" name="guardar_formato_catorce" id ="guardar_formato_catorce" style="margin-bottom: 2rem;">Guardar formato 14</button>
+    </div>
+
+    <b style="font-size: 25px !important;">Formato 15: Programación de la atencióna a la población objetivo en el mediano plazo</b><br>
+    <div>
+      <pre style="display: none;" id="data_f15">{{datos_f15}}</pre>
+      <script> setTimeout(()=>{actualizarTotalesF15();},100)</script>
+      <table  class="my-table table tabla-bordes-punteados" id="tabla-formato-15">
+        <div id="alerta-limite" style="color: white; font-weight: bold; display: none; width: 30%; height: 20px; background-color: rgba(255, 0, 0, 0.749); border-radius: 1rem; margin-bottom: 0.5rem;"></div>
+        <thead>
+          <tr>
+            <th scope="col" style="width: 22% !important; background-color: #c2995cd7 !important;">Concepto</th>
+            <th scope="col" style="width: 20% !important; background-color: #c2995cd7 !important;" >Total de la población objetivo</th>
+            <th scope="col" style="width: 9.6% !important; background-color: #c2995cd7 !important;">2025</th>
+            <th scope="col" style="width: 9.6% !important; background-color: #c2995cd7 !important;">2026</th>
+            <th scope="col" style="width: 9.6% !important; background-color: #c2995cd7 !important;">2027</th>
+            <th scope="col" style="width: 9.6% !important; background-color: #c2995cd7 !important;">2028</th>
+            <th scope="col" style="width: 9.6% !important; background-color: #c2995cd7 !important;">2029</th>
+            <th scope="col" style="width: 9.6% !important; background-color: #c2995cd7 !important;">2030</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a type="text" id="" style="width: 100%;">Total</a></td>
+            <td><input type="number" placeholder="0" id="total_total" name="total" style="width: 100%; border: none;"></td>
+            <td><input type="number" placeholder="0" id="total_2025" style="width: 100%; border: none;"></td>
+            <td><input type="number" placeholder="0" id="total_2026" style="width: 100%; border: none;"></td>
+            <td><input type="number" placeholder="0" id="total_2027" style="width: 100%; border: none;"></td>
+            <td><input type="number" placeholder="0" id="total_2028" style="width: 100%; border: none;"></td>
+            <td><input type="number" placeholder="0" id="total_2029" style="width: 100%; border: none;"></td>
+            <td><input type="number" placeholder="0" id="total_2030" style="width: 100%; border: none;"></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><a type="text" id="" style="width: 100%;">Mujeres</a></td>
+            <td><input type="number" placeholder="0" id="mujeres_total" name="total" style="width: 100%; border: none;" value="{{ poblaciones.objetivo.mujeres }}"></td>
+            <td><input type="number" placeholder="0" id="mujeres_2025" style="width: 100%; border: none;"   value="{{ datos_f15.objetivo.mujeres.anio_2025}}"></td>
+            <td><input type="number" placeholder="0" id="mujeres_2026" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.mujeres.anio_2026}}"></td>
+            <td><input type="number" placeholder="0" id="mujeres_2027" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.mujeres.anio_2027}}"></td>
+            <td><input type="number" placeholder="0" id="mujeres_2028" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.mujeres.anio_2028}}"></td>
+            <td><input type="number" placeholder="0" id="mujeres_2029" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.mujeres.anio_2028}}"></td>
+            <td><input type="number" placeholder="0" id="mujeres_2030" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.mujeres.anio_2030}}"></td>
+          </tr>
+          <tr>
+            <td><a type="text" id="" style="width: 100%;">hombres</a></td>
+            <td><input type="number" placeholder="0" id="hombres_total" name="total" style="width: 100%; border: none;"  value="{{ poblaciones.objetivo.hombres }}"></td>
+            <td><input type="number" placeholder="0" id="hombres_2025" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hombres.anio_2025}}" ></td>
+            <td><input type="number" placeholder="0" id="hombres_2026" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hombres.anio_2026}}" ></td>
+            <td><input type="number" placeholder="0" id="hombres_2027" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hombres.anio_2027}}" ></td>
+            <td><input type="number" placeholder="0" id="hombres_2028" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hombres.anio_2028}}" ></td>
+            <td><input type="number" placeholder="0" id="hombres_2029" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hombres.anio_2029}}" ></td>
+            <td><input type="number" placeholder="0" id="hombres_2030" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hombres.anio_2030}}" ></td>
+          </tr>
+          <tr>
+            <td><a type="text" id="" style="width: 100%;">Hablantes de lengua índigena</a></td>
+            <td><input type="number" placeholder="0" id="hli_total" name="total" style="width: 100%; border: none;"  value="{{ poblaciones.objetivo.hablantes_lengua }}"></td>
+            <td><input type="number" placeholder="0" id="hli_2025" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hablantes_de_lengua_índigena.anio_2025}}"></td>
+            <td><input type="number" placeholder="0" id="hli_2026" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hablantes_de_lengua_índigena.anio_2026}}"></td>
+            <td><input type="number" placeholder="0" id="hli_2027" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hablantes_de_lengua_índigena.anio_2027}}"></td>
+            <td><input type="number" placeholder="0" id="hli_2028" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hablantes_de_lengua_índigena.anio_2028}}"></td>
+            <td><input type="number" placeholder="0" id="hli_2029" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hablantes_de_lengua_índigena.anio_2029}}"></td>
+            <td><input type="number" placeholder="0" id="hli_2030" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.hablantes_de_lengua_índigena.2030}}"></td>
+          </tr>
+          <tr>
+            <td><a type="text" id="grupo_edad" style="width: 100%;">Grupo de edad</a><a>({{ poblaciones.objetivo.grupos_edad }})</a></td>
+            <td><input type="text" placeholder="0" id="edad_total" name="total" style="width: 100%; border: none;"></td>
+            <td><input type="text" placeholder="0" id="edad_2025" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.grupo_de_edad.anio_2025}}"></td>
+            <td><input type="text" placeholder="0" id="edad_2026" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.grupo_de_edad.anio_2026}}"></td>
+            <td><input type="text" placeholder="0" id="edad_2027" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.grupo_de_edad.anio_2027}}"></td>
+            <td><input type="text" placeholder="0" id="edad_2028" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.grupo_de_edad.anio_2028}}"></td>
+            <td><input type="text" placeholder="0" id="edad_2029" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.grupo_de_edad.anio_2029}}"></td>
+            <td><input type="text" placeholder="0" id="edad_2030" style="width: 100%; border: none;" value="{{ datos_f15.objetivo.grupo_de_edad.anio_2030}}"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" style="border-radius: 0.25rem; border: none; background-color: #c2995cd7; margin-bottom: 1rem;" id="boton-f15">Agregar otro</button>
+    </div>
+    <div>
+      <button type="button" class="btn btn-warning" name="guardar_formato_quince" id ="guardar_formato_quince" style="margin-bottom: 2rem;">Guardar formato 15</button>
+    </div>
+  </div>
+</div>
+<!-- FORMATO 16 -->
+<div class="tab-content" id="presu">
+	<div class="tab-pane fade show" id="presu-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <b style="font-size: 25px !important;">Formato 16: Presupuesto por componente</b><br>
+    <div class="warning-box">
+      <span>Para visualizar la última versión, actualice su navegador!</span>
+    </div>
+      {% for componente in componentes %}
+        <div class="card f16" style="border:1px solid #ccc; padding:15px; margin-bottom:20px; border-radius:8px; box-shadow: 2px 2px 6px #aaa;">
+          <h5>Componente: <strong style="color: black;"> {{ componente.objetivo }}</strong></h5>
+          <table class="my-table table tabla-bordes-punteados tablatipouno" cellspacing="0" cellpadding="5" style="max-width: 100%; overflow-x: auto;">
+            <thead>
+              <tr>
+                <th style="width: 7% !important;">COG</th>
+                <th style="width: 7% !important;">Meta mediano plazo</th>
+                <th style="width: 7% !important;">2025</th>
+                <th style="width: 7% !important;">Presupuesto</th>
+                <th style="width: 7% !important;">2026</th>
+                <th style="width: 7% !important;">Presupuesto</th>
+                <th style="width: 7% !important;">2027</th>
+                <th style="width: 7% !important;">Presupuesto</th>
+                <th style="width: 7% !important;">2028</th>
+                <th style="width: 7% !important;">Presupuesto</th>
+                <th style="width: 7% !important;">2029</th>
+                <th style="width: 7% !important;">Presupuesto</th>
+                <th style="width: 7% !important;">2030</th>
+                <th style="width: 7% !important;">Presupuesto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1000</td>
+                <td rowspan="9">
+                  <textarea name="meta_mediano_plazo_{{ componente.id_componente }}" style="height: 411px !important; width: 100%;">{{ componente.formato16.meta_medianoplazo }}</textarea>
+                </td>
+                <td rowspan="9">
+                  <textarea name="meta_{{ componente.id_componente }}_2025" style="height: 411px !important; width: 100%;">{{ componente.formato16.meta_2025 }}</textarea>
+                </td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 1000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_1000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td rowspan="9">
+                      <textarea name="meta_{{ componente.id_componente }}_2026" style="height: 411px !important; width: 100%;">{{ componente.formato16.meta_2026 }}</textarea>
+                    </td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_1000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td rowspan="9">
+                      <textarea name="meta_{{ componente.id_componente }}_2027" style="height: 411px !important; width: 100%;">{{ componente.formato16.meta_2027 }}</textarea>
+                    </td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_1000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td rowspan="9">
+                      <textarea name="meta_{{ componente.id_componente }}_2028" style="height: 411px !important; width: 100%;">{{ componente.formato16.meta_2028 }}</textarea>
+                    </td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_1000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td rowspan="9">
+                      <textarea name="meta_{{ componente.id_componente }}_2029" style="height: 411px !important; width: 100%;">{{ componente.formato16.meta_2029 }}</textarea>
+                    </td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_1000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td rowspan="9">
+                      <textarea name="meta_{{ componente.id_componente }}_2030" style="height: 411px !important; width: 100%;">{{ componente.formato16.meta_2030 }}</textarea>
+                    </td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_1000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+              <tr>
+                <td>2000</td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 2000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_2000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_2000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_2000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_2000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_2000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_2000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+
+              <tr>
+                <td>3000</td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 3000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_3000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_3000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_3000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_3000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_3000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_3000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+
+              <tr>
+                <td>4000</td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 4000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_4000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_4000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_4000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_4000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_4000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_4000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+
+              <tr>
+                <td>5000</td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 5000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_5000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_5000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_5000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_5000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_5000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_5000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+
+              <tr>
+                <td>6000</td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 6000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_6000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_6000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_6000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_6000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_6000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_6000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+
+              <tr>
+                <td>7000</td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 7000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_7000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_7000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_7000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_7000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_7000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_7000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+
+              <tr>
+                <td>8000</td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 8000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_8000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_8000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_8000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_8000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_8000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_8000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+
+              <tr>
+                <td>9000</td>
+                {% for sf in componente.formato16.subformato %}
+                  {% if sf.cog == 9000 %}
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_9000_2025" value="{{ sf.presupuesto_2025 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_9000_2026" value="{{ sf.presupuesto_2026 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_9000_2027" value="{{ sf.presupuesto_2027 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_9000_2028" value="{{ sf.presupuesto_2028 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_9000_2029" value="{{ sf.presupuesto_2029 }}" /></td>
+                    <td><input type="number" placeholder="0" name="presupuesto_{{ componente.id_componente }}_9000_2030" value="{{ sf.presupuesto_2030 }}" /></td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      {% endfor %}
+  <div>
+    <button type="button" class="btn btn-warning" name="guardar_formato_dieciseis" id ="guardar_formato_dieciseis" style="margin-bottom: 2rem;">Guardar formato 16</button>
+  </div>
+  </div>
+</div>
+<!-- FORMATO 17 -->
+<div class="tab-content" id="ff">
+	<div class="tab-pane fade show" id="ff-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+    <script>
+      const formato17 = {{ datos_f17|safe }};
+    </script>
+    <b style="font-size: 25px !important;">Formato 17: Fuentes de financiamiento</b><br>
+    <div>
+      <table class="my-table table tabla-bordes-punteados" id="tabla-formato-17">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 30% !important; background-color: #c2995cd7 !important;">Fuente de financiamiento</th>
+            <th scope="col" style="width: 11.6% !important; background-color: #c2995cd7 !important;">2025</th>
+            <th scope="col" style="width: 11.6% !important; background-color: #c2995cd7 !important;">2026</th>
+            <th scope="col" style="width: 11.6% !important; background-color: #c2995cd7 !important;">2027</th>
+            <th scope="col" style="width: 11.6% !important; background-color: #c2995cd7 !important;">2028</th>
+            <th scope="col" style="width: 11.6% !important; background-color: #c2995cd7 !important;">2029</th>
+            <th scope="col" style="width: 11.6% !important; background-color: #c2995cd7 !important;">2030</th>
+            <th scope="col" style="width: 1% !important; background-color: #c2995cd7 !important;">🗑️</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <select class="form-select" id="ff-select" name="ff-select">
+                  {% for fuente in ff %}
+                    <option value="{{ fuente.id_ff }}">
+                      {{ fuente.numero }} - {{ fuente.nombre }}
+                    </option>
+                  {% endfor %}
+              </select>
+            </td>
+            <td><input type="number"  inputmode="numeric"  placeholder="0" id="2025" style="width: 100%; border: none; "></td>
+            <td><input type="number" inputmode="numeric" placeholder="0" id="2026" style="width: 100%; border: none;"></td>
+            <td><input type="number" inputmode="numeric" placeholder="0" id="2027" style="width: 100%; border: none;"></td>
+            <td><input type="number" inputmode="numeric" placeholder="0" id="2028" style="width: 100%; border: none;"></td>
+            <td><input type="number" inputmode="numeric" placeholder="0" id="2029" style="width: 100%; border: none;"></td>
+            <td><input type="number" inputmode="numeric" placeholder="0" id="2030" style="width: 100%; border: none;"></td>
+            <td><button type="button" class="eliminar-f17 buton-eliminar-formatos" >x</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <button type="button" style="border-radius: 0.25rem; border: none; background-color: #c2995cd7; margin-bottom: 1rem;" id="boton-f17">Agregar fuente de financimiento</button>
+      </div>
+      <div>
+      <button type="button" class="btn btn-warning" name="guardar_formato_17" id ="guardar_formato_17" style="margin-bottom: 2rem;">Guardar formato 13</button>
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+<!--SCRIPTS PROPIOS-->
+<script src="{% static 'js/scriptsnoprioritarios.js' %}"></script>
+<script src="{% static 'js/arboles.js' %}"></script>
+<script src="{% static 'js/format.js' %}"></script>
+<!--SCRIPTS DEL TEMPLATE-->
+<script src="{% static 'js/vendor.min.js' %}"></script>
+<script src="{% static 'libs/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'libs/simplebar.min.js' %}"></script>
+<script src="{% static 'js/app.init.js' %}"></script>
+<script src="{% static 'js/theme.js' %}"></script>
+<script src="{% static 'js/app.min.js' %}"></script>
+<script src="{% static 'js/sidebarmenu.js' %}"></script>
+ <!-- solar icons -->
+ <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+ <script src="{% static 'js/jquery.steps.min.js' %}"></script>
+
+ <script src="{% static 'js/jquery.validate.min.js' %}"></script>
+ <script src="{% static 'js/form-wizard.js' %}"></script>
+{% endblock %}

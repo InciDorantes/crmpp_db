@@ -1,0 +1,15 @@
+django
+psycopg
+psycopg2-binary
+pandas
+openpyxl
+requests
+reportlab
+xhtml2pdf
+Pillow
+openai
+graphviz
+numpy
+pandas
+yagmail==0.15.293
+django-environ

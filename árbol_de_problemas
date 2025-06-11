@@ -1,0 +1,123 @@
+digraph {
+	graph [bgcolor=transparent splines=ortho]
+	rankdir=BT size=80
+	superior [label="Mala calidad del agua en el estado" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ei_104 [label="Escaso mantenimiento de
+las redes de
+agua potable." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ei_104 -> superior
+	ei_105 [label="Menoscabo de la
+estructura karstica y
+perdida de biodiversidad" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ei_105 -> superior
+	ei_106 [label=Prueba fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ei_106 -> superior
+	ei_107 [label=Prueba fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ei_107 -> superior
+	central [label="La población del estado de Yucatán presenta problemas de dotación
+y saneamiento de las aguas que comprometen su salud y
+la calidad de los acuíferos" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	ed_139 [label="Altos costos en
+tratamiento de agua." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	central -> ed_139
+	ed_139 -> ei_104
+	ed_140 [label="Pérdida de los
+cenotes como espacios
+ecosistémicos saludables" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	central -> ed_140
+	ed_140 -> ei_105
+	ed_141 [label="Manejo inadecuado en
+los procesos de
+abastecimiento y tratamiento
+de aguas por
+parte de los
+operadores de agua
+potable." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	central -> ed_141
+	ed_141 -> ei_106
+	ed_142 [label="Usos y costumbres
+inadecuados de la
+población (mala disposición
+de residuos)" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	central -> ed_142
+	ed_142 -> ei_107
+	cd_158 [label="Problemas operativos en
+el manejo de
+los sistemas de
+abastecimiento y tratamiento
+de agua." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_158 -> central
+	cd_159 [label="Los servicios de
+atención al público
+son inadecuados e
+ineficientes" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_159 -> central
+	cd_160 [label="Aumenta la cantidad
+de población que
+no tiene acceso
+a una toma
+de agua." fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_160 -> central
+	cd_161 [label="Proliferación de comercio
+ilegal arqueológico y
+espeleotemas" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_161 -> central
+	cd_162 [label="Deficiente socializaciòn del
+reglamento de protecciòn
+y conservaciòn de
+los cenotes" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_162 -> central
+	cd_163 [label="Desarticulación entres las
+instancias involucradas en
+la distribución del
+agua" fontname="Lato Semibold" fontsize=10 shape=rectangle]
+	cd_163 -> central
+	ci_225 [label="Personal
+no
+calificado" fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_225 -> cd_158
+	ci_226 [label="Desconocimiento
+y
+utilización
+de
+tecnologías
+obsoletas." fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_226 -> cd_159
+	ci_227 [label="Bajo
+presupuesto
+para
+las
+actividades
+de
+ampliación
+de
+redes
+hidráulicas." fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_227 -> cd_160
+	ci_228 [label="Desacato
+de
+la
+normatividad
+de
+protección
+y
+conservación
+de
+los
+cenotes" fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_228 -> cd_161
+	ci_229 [label="Desacato
+de
+la
+normatividad
+de
+protección
+y
+conservación
+de
+los
+cenotes" fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_229 -> cd_162
+	ci_230 [label=prueba fontname="Lato Semibold" fontsize=9 shape=rectangle]
+	ci_230 -> cd_163
+}
