@@ -36,7 +36,7 @@
     <select id="usuarios" name="usuarios" multiple="multiple" style="width: 300px;">
       {% for profile in user_profiles %}
         <option value="{{ profile.user.id }}">
-          {{ profile.user.username }} - {{ profile.siglas }}
+          {{ profile.user.username }} - {{ profile.area }}
         </option>
       {% endfor %}
     </select>

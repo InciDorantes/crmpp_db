@@ -561,6 +561,7 @@ class FormatoDieciseis(models.Model):
     meta_2028 = models.TextField()
     meta_2029 = models.TextField()
     meta_2030 = models.TextField()
+    id_pp = models.ForeignKey(programas_p, on_delete=models.CASCADE)
 
 class Subformato16 (models.Model):
     registro = models.ForeignKey(FormatoDieciseis, on_delete=models.CASCADE, related_name='subformato16')

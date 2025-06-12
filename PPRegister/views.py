@@ -51,6 +51,7 @@ from .utils.excelfunction import (
     merge_filas,
     llenar_f17,
     llenar_f15,
+    llenar_f16,
     llenar_f12
 )
 
@@ -620,404 +621,6 @@ def view_excel(id_pp):
     programa = programas_p.objects.get(id_pp=id_pp)
     nombre = programa.nombre_pp
     id = programa.id_pp
-
-    #arboles
-    arbol_problemas= {'nodos':[], 'conexiones':[]}
-    if Nodo.objects.filter(id_pp__id_pp=id).exists():
-            arbol_problemas = estructura_AP(id)
-    arbol_objetivos = {'nodos':[], 'conexiones':[]}
-    if Nodo.objects.filter(id_pp__id_pp=id).exists() and NodoAO.objects.filter(id_pp__id_pp=id).exists():
-            arbol_objetivos = estructura_AO(id)
-
-    test_formato1 = {}
-
-    test_formato2 = {}
-
-    test_formato3 = {}
-
-    test_formato4 = {}
-
-    test_formato5 ={}
-    if PoblacionObjetivo.objects.filter(id_pp=id).exists():
-        test_formato5 = estructura_poblacion_obj(id)
-    
-    test_formato6 = {}
-        
-
-    test_formato8 ={}
-    if BienServicio.objects.filter(id_pp=id).exists():
-        bienes_guardados = BienServicio.objects.filter(id_pp=id)
-        test_formato8 = [model_to_dict(bien) for bien in bienes_guardados]    
-
-    test_formato9 = {}
-    
-    test_formato10= {}
-    if FichaIndicador.objects.filter(id_pp_id=id,tipo_ficha='fin').exists():
-        test_formato10 = generar_data_mir(id)
-    
-    test_formato11 = {}
-    test_formato12 = {}
-    test_formato13 = {}
-    test_formato14 = {}
-    test_formato15 = {}
-    test_formato16 = {}
-    test_formato17 = {}
-
-    wb = Workbook()
-    titulos_y_columnas = { 
-                'Formato 1': ['. Documentación de buenas prácticas y programas similares', 8],
-                'Formato 2': ['. Vinculación con otros programas implementados en el estado', 11],
-                'Formato 3': ['. Identificación de involucrados', 5],
-                'Formato 4': ['. Criterios para la focalización de la población objetivo', 3],
-                'Árbol de Problemas': 14,
-                'Árbol de Objetivos': 14,
-                'Formato 5': ['. Identificación y cuantificación de la población objetivo', 9],
-                'Formato 6': ['. Cobertura geográfica', 12],
-                'Formato 7': ['. Alineación con la planeación del desarrollo', 2],
-                'Formato 8': ['. Características de los bienes y/o servicios del programa', 4],
-                'Formato 9': ['. Corresponsabilidad  interinstitucional', 8],
-                'Formato 10': ['. Matriz de Indicadores para Resultados (MIR)', 5],
-                'Formato 11': ['. Ficha de indicadores', 4],
-                'Formato 12': ['. Fuentes de Información', 8], 
-                'Formato 13': ['. Informes de desempeño', 4],
-                'Formato 14': ['. Marco de resultados en el mediano plazo', 10], 
-                'Formato 15': ['. Programación de la atención a la población objetivo en el mediano plazo', 8],
-                'Formato 16': ['. Presupuesto por Componente', 12],
-                'Formato 17': ['. Fuentes de Financiamiento', 6]
-                }
-
-    for formato, lista in titulos_y_columnas.items():
-        if formato == 'Formato 11':
-            #test_formato11 = {}
-            tittle="Formato 11"
-            wb.create_sheet(tittle)
-            crear_encabezado(wb[tittle], 'Formato 11. Ficha Técnica  de Indicadores', 4, nombre, fill = True)
-            formato_esqueleto_fichas(wb[tittle])
-            #(ws, test_formato11)
-        else:
-            formato
-            tittle = str(f"{formato}{lista[0] if isinstance(lista, list) else ''}")
-            wb.create_sheet(formato)
-            ws = wb[formato]
-            if formato == 'Formato 1':
-                #### dar formato a la hoja formato 1
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                nombre_cols = ['Nombre del programa','Lugar donde se implementó',	'Objetivo',	'Descripción' ,	'Población objetivo',	'Bienes y servicios que entrega',	'Resultados de evaluaciones',	'Vínculo al documento fuente de información']
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
-                ws.column_dimensions['A'].width = 35
-                for num in range(2, lista[1]+1):
-                    ws.column_dimensions[chr(num+64)].width = 20
-                    
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col)
-
-                llenar_f1(ws, id)
-            elif formato =='Formato 2':
-                #### dar formato a la hoja formato 2
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                nombre_cols1 =['Nombre del programa','Tipo de programa ','','Objetivo','Población objetivo','Bienes y servicios que provee','Cobertura ','','Institución/ Dirección que coordina el programa','Interdependencias  entre los programas','']
-                nombre_cols2 = ['','Valor','Otro (Especifique)','','','','Valor','Otro (especifique)','','Valor','Describir interpendencia']
-                for i, col in enumerate(nombre_cols1):
-                    cell = ws.cell(row = 3, column = i+1, value= col)
-                for i, col in enumerate(nombre_cols2):
-                    cell = ws.cell(row = 4, column = i+1, value= col)
-                for num in range(1, lista[1]+1):
-                    ws.column_dimensions[chr(num+64)].width = 20
-                merge_filas(ws, 3, lista[1])
-                merge_columns_flexible(ws, 3, lista[1])
-                merge_columns_flexible(ws, 4, lista[1])
-                formato_encabezado_tablas(ws, 4, lista[1],12,'d')
-                formato_encabezado_tablas(ws, 3, lista[1],12,'d')
-            elif formato == 'Formato 3':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                nombre_cols = ['Actor','','Descripción del tipo de relación con el programa','Posición','Influencia']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col)
-                    nombre_cols = ['Tipo','Nombre','','','']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 4, column = i+1, value= col)
-                merge_filas(ws, 3, lista[1])
-                formato_encabezado_tablas(ws, 3, lista[1],12,'d')
-                merge_columns_flexible(ws, 3, lista[1])
-                formato_encabezado_tablas(ws, 4, lista[1],12,'d')
-                ws.row_dimensions[4].height = 36 
-                ws.column_dimensions['A'].width = 21    
-                ws.column_dimensions['B'].width = 34 
-                ws.column_dimensions['C'].width = 58 
-                ws.column_dimensions['D'].width = 33 
-                ws.column_dimensions['E'].width = 33 
-            elif formato == 'Formato 4':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                nombre_cols = ['Criterio','Descripción del criterio','Justificación de la elección']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col)
-                formato_encabezado_tablas(ws, 3, lista[1],12,'d')
-                ws.column_dimensions['A'].width = 46    
-                ws.column_dimensions['B'].width = 46 
-                ws.column_dimensions['C'].width = 46 
-                
-            elif formato == 'Árbol de Problemas' or formato == 'Árbol de Objetivos':
-                data_map = {
-                    'Árbol de Problemas': arbol_problemas,
-                    'Árbol de Objetivos': arbol_objetivos
-                    }
-                #### Llenar Arboles
-                crear_encabezado(ws, tittle, lista, nombrePP = nombre, fill = True)
-                if tittle in data_map:
-                    if data_map[tittle] is not None:
-                        arbol = crear_arbol(data_map[tittle])
-                        pil_img = Image.open(arbol)
-                        output_arbol = io.BytesIO()
-                        pil_img.save(output_arbol, format='PNG')
-                        output_arbol.seek(0)
-                        img = XLImage(output_arbol)
-                        ws.add_image(img, "A3")
-            elif formato =='Formato 5':
-                #### dar formato a la hoja formato 5
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                nombre_cols1 =['Tipo','Descripcion','Hombres','Mujeres','Hablantes de lengua indígena','Grupos de edad','Otros criterios','','Medio de Verificación']
-                nombre_cols2 = ['','','','','','','Descripción','Cuantificación','']
-                for i, col in enumerate(nombre_cols1):
-                    cell = ws.cell(row = 3, column = i+1, value= col)
-                for i, col in enumerate(nombre_cols2):
-                    cell = ws.cell(row = 4, column = i+1, value= col)
-                for num in range(1, lista[1]+1):
-                    if num == 1:
-                        ws.column_dimensions['A'].width = 30
-                    elif num == 2:
-                        ws.column_dimensions['B'].width = 40
-                    elif num == lista[1]:
-                        ws.column_dimensions[chr(num+64)].width = 40
-                    else: 
-                        ws.column_dimensions[chr(num+64)].width = 17
-                if test_formato5:        
-                    Llenar_f5(ws, test_formato5)
-                merge_filas(ws, 3, lista[1])
-                merge_columns_flexible(ws, 3, lista[1])
-                merge_columns_flexible(ws, 3, lista[1])
-                formato_encabezado_tablas(ws, 4, lista[1], 12, 'd')
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
-
-            elif formato =='Formato 6':
-                #### dar formato a la hoja formato 6
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                for num in range(1, lista[1]+1):
-                    if num == 1:
-                        width = 46
-                    elif num == 4:
-                        width = 24
-                    else: 
-                        width = 19
-                    ws.column_dimensions[chr(num+64)].width = width
-                ws.row_dimensions[5].height = 25
-
-                nombre_cols = ['Nombre del municipio*', 'Número de localidades*', 'Población Total *','Población Objetivo **','','',
-                               '','','','','','']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col) 
-                
-                merge_columns_flexible(ws, 3, lista[1], merge_count=8)
-                formato_encabezado_tablas(ws, 3, lista[1], 10, 'd')
-
-                nombre_cols2 = ['','','','Cuantificación','Número de habtantes por tamaño de localidad','',
-                                '','','','','% de la población urbana*','% de la población rural*']
-                for i, col in enumerate(nombre_cols2):
-                    ws.cell(row = 4, column = i+1, value= col)
-                merge_columns_flexible(ws, 4, lista[1], merge_count=5)
-                formato_encabezado_tablas(ws, 4, lista[1], 10, 'd')
-
-                nombre_cols3 = ['','','','','De hasta 500 habitantes','501-2,500',
-                                '2,501-10,000','1,001-15,000','15,000-49,999','Más de 50,000','','']
-                for i, col in enumerate(nombre_cols3):
-                    ws.cell(row = 5, column = i+1, value= col)
-                formato_encabezado_tablas(ws, 5, lista[1], 10, 'd')
-                nombre_cols4 = ['','número','=+SUMA(C7:C115)','número= suma de las columnas de número de habitantes por tamaño de localidad','número','número','número','número','número','número','Porcentaje = número de habitantes menores o iguales a  2500)/cuentificación','Porcentaje = número de habitantes mayores 2500)/cuentificación']
-                for i, col in enumerate(nombre_cols4):
-                    cell = ws.cell(row = 6, column = i+1, value= col)
-                    formato_celda_cuerpo(cell, 10)
-
-                merge_dos_filas(ws,3, lista[1])
-                merge_filas(ws,4, lista[1])
-
-                llenar_f6(ws, id)
-            elif formato =='Formato 7':
-                #### dar formato a la hoja formato 7
-           
-                #if test_formato7:
-                #### Llenar formato 7
-                Llenar_f7(ws, id, tittle, lista, nombre)      
-            elif formato =='Formato 8':
-                #### dar formato a la hoja formato 8
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                nombre_cols = ['Bien o servicio',
-                            'Descripción del bien o servicio',
-                            'Criterios de calidad',
-                            'Criterios para determinar la entrega oportuna']
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
-                ws.column_dimensions['A'].width = 25
-                for num in range(2, lista[1]):
-                    ws.column_dimensions[chr(num+64)].width = 40
-                ws.column_dimensions['D'].width = 50
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col)  
-                if test_formato8:
-                    Llenar_f8(ws, test_formato8)
-            elif formato =='Formato 9':
-                #### dar formato a la hoja formato 9
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                nombre_cols = ['Dependencia /Entidad',
-                            'Área',
-                            'Código Centro de Costos (3 niveles)',
-                            'Función en la ejecución del programa',
-                            'Interactúa con',
-                            'Mecanismos de coordinación	',
-                            'Responsabilidad',
-                            'Atribución legal CAPY /RECAPY']
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
-                for num in range(1, lista[1]+1):
-                    ws.column_dimensions[chr(num+64)].width = 22
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col)  
-                
-                llenar_f9(ws, id)
-                    
-            elif formato =='Formato 10':
-                #### formato 10###
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
-                nombre_cols = ['Resumen Narrativo',
-                            '',
-                            'Indicadores',
-                            'Medio de verificación',
-                            'Supuestos']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col)  
-                nombre_cols2 = ['Tipo','Objetivo','','','']
-                for i, col in enumerate(nombre_cols2):
-                    ws.cell(row = 4, column = i+1, value= col)
-                for num in range(1, lista[1]+1):
-                    if num == 1:
-                        ws.column_dimensions[chr(num+64)].width = 20
-                    elif num == 2 or num == lista[1]:
-                        ws.column_dimensions[chr(num+64)].width = 40
-                    else: 
-                        ws.column_dimensions[chr(num+64)].width = 22
-                merge_filas(ws,3, lista[1])
-                merge_columns_flexible(ws, 3, lista[1])
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
-                merge_columns_flexible(ws, 4, lista[1])
-                formato_encabezado_tablas(ws, 4, lista[1], 12, 'd')
-                ## llenado de datos
-                if test_formato10:
-                    llenar_f10(ws, test_formato10)
-            elif formato == 'Formato 12':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
-                nombre_cols = ['Nombre del Indicador', 'Descripción de la variable', 'Registro Administrativo',
-                                    'Desagregación por sexo', 'Instrumento de recolección de la información',
-                                    '¿En qué programa informático/software tiene o tendrá su base de datos?',
-                                    'Responsable de la producción de información', 'Periodicidad de la producción de la información']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col) 
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'r')
-                ws.row_dimensions[3].height = 65
-                for num in range(1, lista[1]+1):
-                    if num == 1:
-                        ws.column_dimensions['A'].width = 38
-                    else: 
-                        ws.column_dimensions[chr(num+64)].width = 20
-            elif formato == 'Formato 13':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
-                nombre_cols = ['Nombre del reporte', 'Descripción general de la información reportada', 'Periodicidad',
-                                    'Responsable de la integración']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col)
-                formato_encabezado_tablas(ws, 3, lista[1], 10, 'r')
-                ws.row_dimensions[3].height = 46 
-                for num in range(1, lista[1]+1):
-                    ws.column_dimensions[chr(num+64)].width = 38
-            elif formato == 'Formato 14':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
-                nombre_cols0 = ['Marco de Resultados de mediano plazo', '', '','','','','','','','']
-                for i, col in enumerate(nombre_cols0):
-                    ws.cell(row = 3, column = i+1, value= col)
-                nombre_cols = ['Resumen narrativo', 'Indicadores y metas', '','','','','','','',
-                            'Medios de verificación']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 4, column = i+1, value= col) 
-                nombre_cols2 = ['','Indicadores','Línea base','Metas por año','','','','','','']
-                for i, col in enumerate(nombre_cols2):
-                    ws.cell(row = 5, column = i+1, value= col)
-                nombre_cols3 = ['','','',2025,2026,2027,2028,2029,'Total','']
-                for i, col in enumerate(nombre_cols3):
-                    ws.cell(row = 6, column = i+1, value= col)
-                merge_dos_filas(ws,4, lista[1])
-                merge_filas(ws,5, lista[1])
-                merge_columns_flexible(ws, 4, lista[1], merge_count=7)
-                merge_columns_flexible(ws, 5, lista[1], merge_count=5)
-                merge_columns_flexible(ws, 3, lista[1], merge_count=9)
-                for fila in range(4, 7):  # 4, 5, 6
-                    formato_encabezado_tablas(ws, fila, lista[1],12,'r')
-                ws.column_dimensions['A'].width = 55
-                ws.column_dimensions['B'].width = 13
-                ws.column_dimensions['C'].width = 17
-                for col in ['D', 'E', 'F', 'G', 'H', 'I']:
-                    ws.column_dimensions[col].width = 10
-                ws.column_dimensions['J'].width = 16
-            elif formato == 'Formato 15':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'r')
-                formato_encabezado_tablas(ws, 3, lista[1], 12, 'r')
-                nombre_cols = ['Concepto', 'Total de la población objetivo', 'Población programada a atender','','','','']
-                for i, col in enumerate(nombre_cols):
-                    cell = ws.cell(row = 3, column = i+1, value= col) 
-                nombre_cols2 = ['', '', 2025,2026,2027,2028,2029]
-                for i, col in enumerate(nombre_cols2):
-                    cell = ws.cell(row = 4, column = i+1, value= col)
-                formato_encabezado_tablas(ws, 3, lista[1], 12,'r')
-                formato_encabezado_tablas(ws, 4, lista[1], 12,'r')
-                merge_columns_flexible(ws, 3, lista[1], merge_count=4)
-                merge_filas(ws,3, lista[1])
-                merge_filas(ws,4, lista[1])
-                for num in range(1, lista[1]+1):
-                    if num == 1:
-                        ws.column_dimensions['A'].width = 40
-                    if num == 2:
-                        ws.column_dimensions['B'].width = 32 
-                    else: 
-                        ws.column_dimensions[chr(num+64)].width = 11
-            elif formato == 'Formato 16':
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill=False)
-                nombre_cols = ['Componente/ capítulo','Meta de mediano plazo del componente',2025, 'Presupuesto',2026, 'Presupuesto',
-                                2027, 'Presupuesto',2028, 'Presupuesto',2029, 'Presupuesto']
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col) 
-                formato_encabezado_tablas(ws, 3, lista[1],10,'r')
-                for num in range(1, lista[1]+1):
-                    if num == 1:
-                        ws.column_dimensions['A'].width = 38
-                    if num == 2:
-                        ws.column_dimensions['B'].width = 25
-                    else:
-                        ws.column_dimensions[chr(num+64)].width = 16 
-            else:
-                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = False)
-                nombre_cols = ['Fuentes de financiamiento',2025, 2026, 2027, 2028, 2029]
-                for i, col in enumerate(nombre_cols):
-                    ws.cell(row = 3, column = i+1, value= col)
-                formato_encabezado_tablas(ws, 3, lista[1], 10, 'd')
-                for num in range(1, lista[1]+1):
-                    if num == 1:
-                        ws.column_dimensions['A'].width = 40
-                    else:
-                        ws.column_dimensions['B'].width = 10
-    if 'Sheet' in wb.sheetnames:
-        del wb['Sheet']
-
-    return wb
-
-def generar_excel(request, id_pp):
-    programa = programas_p.objects.get(id_pp=id_pp)
-    nombre = programa.nombre_pp
-    id = programa.id_pp
     entidad = programa.user.userprofile.siglas
 
     #arboles
@@ -1081,7 +684,7 @@ def generar_excel(request, id_pp):
                 'Formato 13': ['. Informes de desempeño', 4],
                 'Formato 14': ['. Marco de resultados en el mediano plazo', 10], 
                 'Formato 15': ['. Programación de la atención a la población objetivo en el mediano plazo', 8],
-                'Formato 16': ['. Presupuesto por Componente', 12],
+                'Formato 16': ['. Presupuesto por Componente', 14],
                 'Formato 17': ['. Fuentes de Financiamiento', 7]
                 }
 
@@ -1353,7 +956,9 @@ def generar_excel(request, id_pp):
                 ####-----
             elif formato == 'Formato 14':
                 crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                formato_encabezado_tablas(ws, 3, 1, 11, 'd')
                 nombre_cols0 = ['Marco de Resultados de mediano plazo', '', '','','','','','','','']
+                
                 for i, col in enumerate(nombre_cols0):
                     ws.cell(row = 3, column = i+1, value= col)
                 nombre_cols = ['Resumen narrativo', 'Indicadores y metas', '','','','','','','',
@@ -1408,7 +1013,7 @@ def generar_excel(request, id_pp):
             elif formato == 'Formato 16':
                 crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill=True)
                 nombre_cols = ['Componente/ capítulo','Meta de mediano plazo del componente',2025, 'Presupuesto',2026, 'Presupuesto',
-                                2027, 'Presupuesto',2028, 'Presupuesto',2029, 'Presupuesto']
+                                2027, 'Presupuesto',2028, 'Presupuesto',2029, 'Presupuesto',2030, 'Presupuesto']
                 for i, col in enumerate(nombre_cols):
                     ws.cell(row = 3, column = i+1, value= col) 
                 formato_encabezado_tablas(ws, 3, lista[1],10,'r')
@@ -1419,6 +1024,434 @@ def generar_excel(request, id_pp):
                         ws.column_dimensions['B'].width = 25
                     else:
                         ws.column_dimensions[chr(num+64)].width = 16 
+
+                    llenar_f16(ws, id)
+            else:
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Fuentes de financiamiento',2025, 2026, 2027, 2028, 2029, 2030]
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col)
+                formato_encabezado_tablas(ws, 3, lista[1], 10, 'd')
+                for num in range(1, lista[1]+1):
+                    if num == 1:
+                        ws.column_dimensions['A'].width = 40
+                    else:
+                        ws.column_dimensions['B'].width = 10
+                llenar_f17(ws, id)
+    if 'Sheet' in wb.sheetnames:
+        del wb['Sheet']
+
+    return wb
+
+def generar_excel(request, id_pp):
+    programa = programas_p.objects.get(id_pp=id_pp)
+    nombre = programa.nombre_pp
+    id = programa.id_pp
+    entidad = programa.user.userprofile.siglas
+
+    #arboles
+    arbol_problemas= {'nodos':[], 'conexiones':[]}
+    if Nodo.objects.filter(id_pp__id_pp=id).exists():
+            arbol_problemas = estructura_AP(id)
+    arbol_objetivos = {'nodos':[], 'conexiones':[]}
+    if Nodo.objects.filter(id_pp__id_pp=id).exists() and NodoAO.objects.filter(id_pp__id_pp=id).exists():
+            arbol_objetivos = estructura_AO(id)
+
+    test_formato1 = {}
+
+    test_formato2 = {}
+
+    test_formato3 = {}
+
+    test_formato4 = {}
+
+    test_formato5 ={}
+    if PoblacionObjetivo.objects.filter(id_pp=id).exists():
+        test_formato5 = estructura_poblacion_obj(id)
+    
+    test_formato6 = {}
+        
+
+    test_formato8 ={}
+    if BienServicio.objects.filter(id_pp=id).exists():
+        bienes_guardados = BienServicio.objects.filter(id_pp=id)
+        test_formato8 = [model_to_dict(bien) for bien in bienes_guardados]    
+
+    test_formato9 = {}
+    
+    test_formato10= {}
+    if FichaIndicador.objects.filter(id_pp_id=id,tipo_ficha='fin').exists():
+        test_formato10 = generar_data_mir(id)
+    
+    test_formato11 = {}
+    test_formato12 = {}
+    test_formato13 = {}
+    test_formato14 = {}
+    test_formato15 = {}
+    test_formato16 = {}
+    test_formato17 = {}
+
+    wb = Workbook()
+    titulos_y_columnas = { 
+                'Formato 1': ['. Documentación de buenas prácticas y programas similares', 8],
+                'Formato 2': ['. Vinculación con otros programas implementados en el estado', 11],
+                'Formato 3': ['. Identificación de involucrados', 5],
+                'Formato 4': ['. Criterios para la focalización de la población objetivo', 3],
+                'Árbol de Problemas': 14,
+                'Árbol de Objetivos': 14,
+                'Formato 5': ['. Identificación y cuantificación de la población objetivo', 9],
+                'Formato 6': ['. Cobertura geográfica', 12],
+                'Formato 7': ['. Alineación con la planeación del desarrollo', 2],
+                'Formato 8': ['. Características de los bienes y/o servicios del programa', 4],
+                'Formato 9': ['. Corresponsabilidad  interinstitucional', 8],
+                'Formato 10': ['. Matriz de Indicadores para Resultados (MIR)', 5],
+                'Formato 11': ['. Ficha de indicadores', 4],
+                'Formato 12': ['. Fuentes de Información', 8], 
+                'Formato 13': ['. Informes de desempeño', 4],
+                'Formato 14': ['. Marco de resultados en el mediano plazo', 10], 
+                'Formato 15': ['. Programación de la atención a la población objetivo en el mediano plazo', 8],
+                'Formato 16': ['. Presupuesto por Componente', 14],
+                'Formato 17': ['. Fuentes de Financiamiento', 7]
+                }
+
+    for formato, lista in titulos_y_columnas.items():
+        if formato == 'Formato 11':
+            fichas=estructurar_fichas(id)
+            for ficha_id, ficha in fichas.items():
+                # 2. Crea una hoja nueva (o la sobreescribe si ya existía con el mismo nombre)
+                nombre_hoja = f'Formato 11 - {ficha["parte1"]["codigo_ordenado"]}'  # ej. "Actividad 1", "Componente 2", etc.
+                ws = wb.create_sheet(title=nombre_hoja)
+                crear_encabezado(ws, 'Formato 11. Ficha Técnica  de Indicadores', 4, nombre, fill = True)
+                # 3. Aplica el formato base a esa hoja
+                formato_esqueleto_fichas(ws)
+                # 4. Llama a la función que llena la ficha
+                llenar_ficha_en_hoja(ws, ficha)
+                ws["B3"] = nombre
+                ws["B4"] = entidad
+        else:
+            formato
+            tittle = str(f"{formato}{lista[0] if isinstance(lista, list) else ''}")            
+            wb.create_sheet(formato)
+            ws = wb[formato]
+            if formato == 'Formato 1':
+                #### dar formato a la hoja formato 1
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Nombre del programa','Lugar donde se implementó',	'Objetivo',	'Descripción' ,	'Población objetivo',	'Bienes y servicios que entrega',	'Resultados de evaluaciones',	'Vínculo al documento fuente de información']
+                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
+                ws.column_dimensions['A'].width = 35
+                for num in range(2, lista[1]+1):
+                    ws.column_dimensions[chr(num+64)].width = 20
+                    
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col)
+
+                llenar_f1(ws, id)
+            elif formato =='Formato 2':
+                #### dar formato a la hoja formato 2
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols1 =['Nombre del programa','Tipo de programa ','','Objetivo','Población objetivo','Bienes y servicios que provee','Cobertura ','','Institución/ Dirección que coordina el programa','Interdependencias  entre los programas','']
+                nombre_cols2 = ['','Valor','Otro (Especifique)','','','','Valor','Otro (especifique)','','Valor','Describir interpendencia']
+                for i, col in enumerate(nombre_cols1):
+                    cell = ws.cell(row = 3, column = i+1, value= col)
+                for i, col in enumerate(nombre_cols2):
+                    cell = ws.cell(row = 4, column = i+1, value= col)
+                for num in range(1, lista[1]+1):
+                    ws.column_dimensions[chr(num+64)].width = 20
+                merge_filas(ws, 3, lista[1])
+                merge_columns_flexible(ws, 3, lista[1])
+                merge_columns_flexible(ws, 4, lista[1])
+                formato_encabezado_tablas(ws, 4, lista[1],12,'d')
+                formato_encabezado_tablas(ws, 3, lista[1],12,'d')
+                ####----- llenado
+                llenar_f2(ws, id)
+                ####-----
+            elif formato == 'Formato 3':
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Actor','','Descripción del tipo de relación con el programa','Posición','Influencia']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col)
+                    nombre_cols = ['Tipo','Nombre','','','']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 4, column = i+1, value= col)
+                merge_filas(ws, 3, lista[1])
+                formato_encabezado_tablas(ws, 3, lista[1],12,'d')
+                merge_columns_flexible(ws, 3, lista[1])
+                formato_encabezado_tablas(ws, 4, lista[1],12,'d')
+                ws.row_dimensions[4].height = 36 
+                ws.column_dimensions['A'].width = 21    
+                ws.column_dimensions['B'].width = 34 
+                ws.column_dimensions['C'].width = 58 
+                ws.column_dimensions['D'].width = 33 
+                ws.column_dimensions['E'].width = 33 
+                ####----- llenado
+                llenar_f3(ws, id)
+                ####-----
+            elif formato == 'Formato 4':
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Criterio','Descripción del criterio','Justificación de la elección']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col)
+                formato_encabezado_tablas(ws, 3, lista[1],12,'d')
+                ws.column_dimensions['A'].width = 46    
+                ws.column_dimensions['B'].width = 46 
+                ws.column_dimensions['C'].width = 46 
+                ####----- llenado
+                llenar_f4(ws, id)
+                ####-----
+                
+            elif formato == 'Árbol de Problemas' or formato == 'Árbol de Objetivos':
+                data_map = {
+                    'Árbol de Problemas': arbol_problemas,
+                    'Árbol de Objetivos': arbol_objetivos
+                    }
+                #### Llenar Arboles
+                crear_encabezado(ws, tittle, lista, nombrePP = nombre, fill = True)
+                if tittle in data_map:
+                    if data_map[tittle] is not None:
+                        arbol = crear_arbol(data_map[tittle])
+                        pil_img = Image.open(arbol)
+                        output_arbol = io.BytesIO()
+                        pil_img.save(output_arbol, format='PNG')
+                        output_arbol.seek(0)
+                        img = XLImage(output_arbol)
+                        ws.add_image(img, "A3")
+            elif formato =='Formato 5':
+                #### dar formato a la hoja formato 5
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols1 =['Tipo','Descripcion','Hombres','Mujeres','Hablantes de lengua indígena','Grupos de edad','Otros criterios','','Medio de Verificación']
+                nombre_cols2 = ['','','','','','','Descripción','Cuantificación','']
+                for i, col in enumerate(nombre_cols1):
+                    cell = ws.cell(row = 3, column = i+1, value= col)
+                for i, col in enumerate(nombre_cols2):
+                    cell = ws.cell(row = 4, column = i+1, value= col)
+                for num in range(1, lista[1]+1):
+                    if num == 1:
+                        ws.column_dimensions['A'].width = 30
+                    elif num == 2:
+                        ws.column_dimensions['B'].width = 40
+                    elif num == lista[1]:
+                        ws.column_dimensions[chr(num+64)].width = 40
+                    else: 
+                        ws.column_dimensions[chr(num+64)].width = 17
+                if test_formato5:        
+                    Llenar_f5(ws, test_formato5)
+                merge_filas(ws, 3, lista[1])
+                merge_columns_flexible(ws, 3, lista[1])
+                merge_columns_flexible(ws, 3, lista[1])
+                formato_encabezado_tablas(ws, 4, lista[1], 12, 'd')
+                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
+
+            elif formato =='Formato 6':
+                #### dar formato a la hoja formato 6
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                for num in range(1, lista[1]+1):
+                    if num == 1:
+                        width = 46
+                    elif num == 4:
+                        width = 24
+                    else: 
+                        width = 19
+                    ws.column_dimensions[chr(num+64)].width = width
+                ws.row_dimensions[5].height = 25
+
+                nombre_cols = ['Nombre del municipio*', 'Número de localidades*', 'Población Total *','Población Objetivo **','','',
+                               '','','','','','']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col) 
+                
+                merge_columns_flexible(ws, 3, lista[1], merge_count=8)
+                formato_encabezado_tablas(ws, 3, lista[1], 10, 'd')
+
+                nombre_cols2 = ['','','','Cuantificación','Número de habtantes por tamaño de localidad','',
+                                '','','','','% de la población urbana*','% de la población rural*']
+                for i, col in enumerate(nombre_cols2):
+                    ws.cell(row = 4, column = i+1, value= col)
+                merge_columns_flexible(ws, 4, lista[1], merge_count=5)
+                formato_encabezado_tablas(ws, 4, lista[1], 10, 'd')
+
+                nombre_cols3 = ['','','','','De hasta 500 habitantes','501-2,500',
+                                '2,501-10,000','1,001-15,000','15,000-49,999','Más de 50,000','','']
+                for i, col in enumerate(nombre_cols3):
+                    ws.cell(row = 5, column = i+1, value= col)
+                formato_encabezado_tablas(ws, 5, lista[1], 10, 'd')
+                nombre_cols4 = ['','número','=+SUMA(C7:C115)','número= suma de las columnas de número de habitantes por tamaño de localidad','número','número','número','número','número','número','Porcentaje = número de habitantes menores o iguales a  2500)/cuentificación','Porcentaje = número de habitantes mayores 2500)/cuentificación']
+                for i, col in enumerate(nombre_cols4):
+                    cell = ws.cell(row = 6, column = i+1, value= col)
+                    formato_celda_cuerpo(cell, 10)
+
+                merge_dos_filas(ws,3, lista[1])
+                merge_filas(ws,4, lista[1])
+                ##### -------- llenado
+                llenar_f6(ws, id)
+                ##### -------- 
+            elif formato =='Formato 7':
+                #### dar formato a la hoja formato 7
+                Llenar_f7(ws, id, tittle, lista, nombre)    
+            elif formato =='Formato 8':
+                #### dar formato a la hoja formato 8
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Bien o servicio',
+                            'Descripción del bien o servicio',
+                            'Criterios de calidad',
+                            'Criterios para determinar la entrega oportuna']
+                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
+                ws.column_dimensions['A'].width = 25
+                for num in range(2, lista[1]):
+                    ws.column_dimensions[chr(num+64)].width = 40
+                ws.column_dimensions['D'].width = 50
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col)  
+                if test_formato8:
+                    Llenar_f8(ws, test_formato8)
+            elif formato =='Formato 9':
+                #### dar formato a la hoja formato 9
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Dependencia /Entidad',
+                            'Área',
+                            'Código Centro de Costos (3 niveles)',
+                            'Función en la ejecución del programa',
+                            'Interactúa con',
+                            'Mecanismos de coordinación	',
+                            'Responsabilidad',
+                            'Atribución legal CAPY /RECAPY']
+                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
+                for num in range(1, lista[1]+1):
+                    ws.column_dimensions[chr(num+64)].width = 22
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col)  
+                #####------- llenado
+                llenar_f9(ws, id)
+                #####------- llenado
+                    
+            elif formato =='Formato 10':
+                #### formato 10###
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Resumen Narrativo',
+                            '',
+                            'Indicadores',
+                            'Medio de verificación',
+                            'Supuestos']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col)  
+                nombre_cols2 = ['Tipo','Objetivo','','','']
+                for i, col in enumerate(nombre_cols2):
+                    ws.cell(row = 4, column = i+1, value= col)
+                for num in range(1, lista[1]+1):
+                    if num == 1:
+                        ws.column_dimensions[chr(num+64)].width = 20
+                    elif num == 2 or num == lista[1]:
+                        ws.column_dimensions[chr(num+64)].width = 40
+                    else: 
+                        ws.column_dimensions[chr(num+64)].width = 22
+                merge_filas(ws,3, lista[1])
+                merge_columns_flexible(ws, 3, lista[1])
+                formato_encabezado_tablas(ws, 3, lista[1], 12, 'd')
+                merge_columns_flexible(ws, 4, lista[1])
+                formato_encabezado_tablas(ws, 4, lista[1], 12, 'd')
+                ## llenado de datos
+                if test_formato10:
+                    llenar_f10(ws, test_formato10)
+            elif formato == 'Formato 12':
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Nombre del Indicador', 'Descripción de la variable', 'Registro Administrativo',
+                                    'Desagregación por sexo', 'Instrumento de recolección de la información',
+                                    '¿En qué programa informático/software tiene o tendrá su base de datos?',
+                                    'Responsable de la producción de información', 'Periodicidad de la producción de la información']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col) 
+                formato_encabezado_tablas(ws, 3, lista[1], 12, 'r')
+                ws.row_dimensions[3].height = 65
+                for num in range(1, lista[1]+1):
+                    if num == 1:
+                        ws.column_dimensions['A'].width = 38
+                    else: 
+                        ws.column_dimensions[chr(num+64)].width = 20
+                llenar_f12(ws, id)
+            elif formato == 'Formato 13':
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                nombre_cols = ['Nombre del reporte', 'Descripción general de la información reportada', 'Periodicidad',
+                                    'Responsable de la integración']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col)
+                formato_encabezado_tablas(ws, 3, lista[1], 10, 'r')
+                ws.row_dimensions[3].height = 46 
+                for num in range(1, lista[1]+1):
+                    ws.column_dimensions[chr(num+64)].width = 38
+                ####----- llenado
+                llenar_f13(ws, id)
+                ####-----
+            elif formato == 'Formato 14':
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                formato_encabezado_tablas(ws, 3, 1, 11, 'd')
+                nombre_cols0 = ['Marco de Resultados de mediano plazo', '', '','','','','','','','']
+                
+                for i, col in enumerate(nombre_cols0):
+                    ws.cell(row = 3, column = i+1, value= col)
+                nombre_cols = ['Resumen narrativo', 'Indicadores y metas', '','','','','','','',
+                            'Medios de verificación']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 4, column = i+1, value= col) 
+                nombre_cols2 = ['','Indicadores','Línea base','Metas por año','','','','','','']
+                for i, col in enumerate(nombre_cols2):
+                    ws.cell(row = 5, column = i+1, value= col)
+                nombre_cols3 = ['','','',2025,2026,2027,2028,2029,2030,'']
+                for i, col in enumerate(nombre_cols3):
+                    ws.cell(row = 6, column = i+1, value= col)
+                merge_dos_filas(ws,4, lista[1])
+                merge_filas(ws,5, lista[1])
+                merge_columns_flexible(ws, 4, lista[1], merge_count=7)
+                merge_columns_flexible(ws, 5, lista[1], merge_count=5)
+                merge_columns_flexible(ws, 3, lista[1], merge_count=9)
+                for fila in range(4, 7):  # 4, 5, 6
+                    formato_encabezado_tablas(ws, fila, lista[1],12,'r')
+                ws.column_dimensions['A'].width = 55
+                ws.column_dimensions['B'].width = 13
+                ws.column_dimensions['C'].width = 17
+                for col in ['D', 'E', 'F', 'G', 'H', 'I']:
+                    ws.column_dimensions[col].width = 10
+                ws.column_dimensions['J'].width = 16
+                llenar_f14(ws, id_pp)
+            elif formato == 'Formato 15':
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
+                formato_encabezado_tablas(ws, 3, lista[1], 12, 'r')
+                formato_encabezado_tablas(ws, 3, lista[1], 12, 'r')
+                nombre_cols = ['Concepto', 'Total de la población objetivo', 'Población programada a atender','','','','','','']
+                for i, col in enumerate(nombre_cols):
+                    cell = ws.cell(row = 3, column = i+1, value= col) 
+                nombre_cols2 = ['', '', 2025,2026,2027,2028,2029,2030]
+                for i, col in enumerate(nombre_cols2):
+                    cell = ws.cell(row = 4, column = i+1, value= col)
+                formato_encabezado_tablas(ws, 3, lista[1], 12,'r')
+                formato_encabezado_tablas(ws, 4, lista[1], 12,'r')
+                merge_columns_flexible(ws, 3, lista[1], merge_count=4)
+                merge_filas(ws,3, lista[1])
+                merge_filas(ws,4, lista[1])
+                for num in range(1, lista[1]+1):
+                    if num == 1:
+                        ws.column_dimensions['A'].width = 40
+                    if num == 2:
+                        ws.column_dimensions['B'].width = 32 
+                    else: 
+                        ws.column_dimensions[chr(num+64)].width = 11
+                llenar_f15(ws, id)
+                ####----- llenado
+                ####-----
+            elif formato == 'Formato 16':
+                crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill=True)
+                nombre_cols = ['Componente/ capítulo','Meta de mediano plazo del componente',2025, 'Presupuesto',2026, 'Presupuesto',
+                                2027, 'Presupuesto',2028, 'Presupuesto',2029, 'Presupuesto',2030, 'Presupuesto']
+                for i, col in enumerate(nombre_cols):
+                    ws.cell(row = 3, column = i+1, value= col) 
+                formato_encabezado_tablas(ws, 3, lista[1],10,'r')
+                for num in range(1, lista[1]+1):
+                    if num == 1:
+                        ws.column_dimensions['A'].width = 38
+                    if num == 2:
+                        ws.column_dimensions['B'].width = 25
+                    else:
+                        ws.column_dimensions[chr(num+64)].width = 16 
+
+                    llenar_f16(ws, id)
             else:
                 crear_encabezado(ws, tittle, lista[1], nombrePP = nombre, fill = True)
                 nombre_cols = ['Fuentes de financiamiento',2025, 2026, 2027, 2028, 2029, 2030]

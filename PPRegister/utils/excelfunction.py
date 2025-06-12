@@ -14,7 +14,7 @@ import pandas as pd
 os.environ["PATH"] += os.pathsep + 'C:\\Program Files (x86)\\Graphviz\\bin'
 from graphviz import Digraph
 from openpyxl.styles import Alignment
-from PPRegister.models import FormatoUno, FormatoDos, FormatoTres, FormatoCuatro, Formato9,UserProfile, Formato6, Municipios, APED, Directriz, Vertiente, ObjetivoEstrategico, ObjetivoEspecifico, LineaAccion, FormatoCatorce, FormatoDieciseis, FormatoDoce, FormatoQuince, FormatoTrece, LineaBase
+from PPRegister.models import FormatoUno, FormatoDos, FormatoTres, FormatoCuatro, Formato9,UserProfile, Formato6, Municipios, APED, Directriz, Vertiente, ObjetivoEstrategico, ObjetivoEspecifico, LineaAccion, FormatoCatorce, FormatoDieciseis, FormatoDoce, FormatoQuince, FormatoTrece, LineaBase, Subformato16
 from PPRegister.models import RegistroFormatoDieciciete,FuenteFinanciamiento, FichaIndicador, Variable, FormatoQuince
 from openpyxl.utils import get_column_letter
 ##### arboles #####
@@ -680,8 +680,6 @@ def llenar_f12(ws, id_pp):
         
 def llenar_f14(ws, id_pp):
     registros = FormatoCatorce.objects.filter(id_pp=id_pp)
-    print('registros:   ')
-    print(type(registros))
     fila_inicio = 7
     if not registros:
         return
@@ -709,7 +707,6 @@ def llenar_f14(ws, id_pp):
 
 def llenar_f15(ws, id_pp):
     registros = FormatoQuince.objects.filter(id_pp=id_pp)
-    print(registros)
     fila_inicio = 5
     if not registros:
         return
@@ -722,6 +719,50 @@ def llenar_f15(ws, id_pp):
         formato_celda_cuerpo(ws.cell(row=i, column=6, value=reg.anio_2028),11) 
         formato_celda_cuerpo(ws.cell(row=i, column=7, value=reg.anio_2029),11) 
         formato_celda_cuerpo(ws.cell(row=i, column=8, value=reg.anio_2030),11) 
+
+def llenar_f16(ws, id_pp):
+    componentes = FormatoDieciseis.objects.filter(id_pp=id_pp)
+    fila_actual = 4
+
+    if not componentes.exists():
+        return
+
+    for reg in componentes:
+        # Imprimir encabezado del componente
+        formato_celda_cuerpo(ws.cell(row=fila_actual, column=1, value=reg.componente.objetivo), 11)
+        formato_celda_cuerpo(ws.cell(row=fila_actual, column=2, value=reg.meta_medianoplazo), 11)
+        formato_celda_cuerpo(ws.cell(row=fila_actual, column=3, value=reg.meta_2025), 11)
+        formato_celda_cuerpo(ws.cell(row=fila_actual, column=5, value=reg.meta_2026), 11)
+        formato_celda_cuerpo(ws.cell(row=fila_actual, column=7, value=reg.meta_2027), 11)
+        formato_celda_cuerpo(ws.cell(row=fila_actual, column=9, value=reg.meta_2028), 11)
+        formato_celda_cuerpo(ws.cell(row=fila_actual, column=11, value=reg.meta_2029), 11)
+        formato_celda_cuerpo(ws.cell(row=fila_actual, column=13, value=reg.meta_2030), 11)
+
+        fila_actual += 1
+
+        # Obtener subregistros ordenados por COG
+        subregistros = reg.subformato16.all().order_by('cog')
+
+        for sub in subregistros:
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=1, value=f"   {sub.get_cog_display()}"), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=2, value=''), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=3, value=''), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=4, value=sub.presupuesto_2025), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=5, value=''), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=6, value=sub.presupuesto_2026), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=7, value=''), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=8, value=sub.presupuesto_2027), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=9, value=''), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=10, value=sub.presupuesto_2028), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=11, value=''), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=12, value=sub.presupuesto_2029), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=13, value=''), 11)
+            formato_celda_cuerpo(ws.cell(row=fila_actual, column=14, value=sub.presupuesto_2030), 11)
+            fila_actual += 1  # Avanza fila por cada COG
+
+                    
+
+
 
 def llenar_f17(ws, id_pp):
     registros = RegistroFormatoDieciciete.objects.filter(id_pp=id_pp)
