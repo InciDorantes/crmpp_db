@@ -980,7 +980,6 @@ def guardarFormatoTrece(data,id_pp):
     ]
     programa = programas_p.objects.get(id_pp=id_pp)
     try:
-        print("DATA RECIBIDA:", data) 
         FormatoTrece.objects.filter(id_pp=programa).delete()
 
         # 🟢 Crear los nuevos registros
@@ -1005,7 +1004,6 @@ def guardarFormatoTrece(data,id_pp):
         return JsonResponse({'status': 'error', 'message': f"Error del back: {str(e)}"})
 
 def guardarFormatoCatorce(data, id_pp):
-    print(data)
     try:
         with transaction.atomic():
             id_pp_obj = programas_p.objects.get(id_pp=id_pp)
@@ -1085,7 +1083,6 @@ def guardarFormatoQuince(data, id_pp):
         return JsonResponse({'status': 'error', 'message': f"Error del servidor: {str(e)}"})
 
 def guardarFormatoDieciseis(data, id_pp):
-    print(data)
     try:
         with transaction.atomic():
             id_pp_obj = programas_p.objects.get(id_pp=id_pp)
@@ -1161,7 +1158,6 @@ def guardarFormatoDieciciete(data, id_pp):
         with transaction.atomic():
             id_pp_obj = programas_p.objects.get(id_pp=id_pp)
             RegistroFormatoDieciciete.objects.filter(id_pp=id_pp_obj).delete()
-            print(data)
             for item in data:
                 id_ff = item.get('id_ff', '')
                 presupuesto = item.get('valores', {})
@@ -1173,7 +1169,6 @@ def guardarFormatoDieciciete(data, id_pp):
                 p_2030 = safe_int(presupuesto.get('2030', 0))
                 
                 ff = FuenteFinanciamiento.objects.get(id_ff=id_ff)
-                print(ff)
                 RegistroFormatoDieciciete.objects.create(
                     id_ff = ff,
                     presupuesto_2025 = p_2025,

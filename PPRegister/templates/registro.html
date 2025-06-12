@@ -65,10 +65,10 @@ const appStateAct ={
 
 <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-bottom: 2rem !important;">
 	<li class="nav-item" role="presentation">
-		<button class="nav-link active" id="context-tab" data-bs-toggle="tab" data-bs-target="#context-home" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Antecedentes</button>
+		<button class="nav-link active" id="context-tab" data-bs-toggle="tab" data-bs-target="#context-home" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true"><span style="cursor: context-menu !important;" data-bs-toggle="tooltip"data-bs-placement="top" title="Formato 1 - Formato 4">Antecedentes</span> </button>
 	</li>
   <li class="nav-item" role="presentation">
-		<button class="nav-link" id="po-tab" data-bs-toggle="tab" data-bs-target="#po-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Población Objetivo</button>
+		<button class="nav-link" id="po-tab" data-bs-toggle="tab" data-bs-target="#po-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false" > <span style="cursor: context-menu !important;" data-bs-toggle="tooltip"data-bs-placement="top" title="Formato 5 y Formato 6">Población Objetivo</span> </button>
 	</li>
 	<li class="nav-item" role="presentation">
 		<button class="nav-link" id="ap-tab" data-bs-toggle="tab" data-bs-target="#ap-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Árbol de Problemas</button>
@@ -77,16 +77,16 @@ const appStateAct ={
 		<button class="nav-link" id="ao-tab" data-bs-toggle="tab" data-bs-target="#ao-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Árbol de Objetivos</button>
 	</li>
 	<li class="nav-item" role="presentation">
-		<button class="nav-link" id="aped-tab" data-bs-toggle="tab" data-bs-target="#aped-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">PED RM</button>
+		<button class="nav-link" id="aped-tab" data-bs-toggle="tab" data-bs-target="#aped-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><span style="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="top" title="Formato 7">PED RM</span></button>
 	</li>
   <li class="nav-item" role="presentation">
-		<button class="nav-link" id="bys-tab" data-bs-toggle="tab" data-bs-target="#bys-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Bienes y Servicios</button>
+		<button class="nav-link" id="bys-tab" data-bs-toggle="tab" data-bs-target="#bys-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><span style="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="top" title="Formato 8">Bienes y Servicios</span></button>
 	</li>
   <li class="nav-item" role="presentation">
-		<button class="nav-link" id="corr-tab" data-bs-toggle="tab" data-bs-target="#corr-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Corresponsables</button>
+		<button class="nav-link" id="corr-tab" data-bs-toggle="tab" data-bs-target="#corr-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false" ><span style="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="top" title="Formato 9">Corresponsables</span> </button>
 	</li>
 	<li class="nav-item" role="presentation">
-		<button class="nav-link" id="mir-tab" data-bs-toggle="tab" data-bs-target="#mir-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">MIR</button>
+		<button class="nav-link" id="mir-tab" data-bs-toggle="tab" data-bs-target="#mir-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><span style="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="top" title="Formato 10">MIR</span></button>
 	</li>
   <!-- FICHAS TECNICAS DE INDICADORES-->
   <li class="nav-item" role="presentation">
@@ -102,19 +102,19 @@ const appStateAct ={
 		<button class="nav-link" id="iA-tab" data-bs-toggle="tab" data-bs-target="#ia-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">FTI Actividad</button>
 	</li>
   <li class="nav-item" role="presentation">
-		<button class="nav-link" id="fi-tab" data-bs-toggle="tab" data-bs-target="#fi-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Fuentes de Información</button>
+		<button class="nav-link" id="fi-tab" data-bs-toggle="tab" data-bs-target="#fi-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"> <spanstyle="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Formato 12">Fuentes de Información</span></button>
 	</li>
   <li class="nav-item" role="presentation">
-		<button class="nav-link" id="id-tab" data-bs-toggle="tab" data-bs-target="#id-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Informes de Desempeño</button>
+		<button class="nav-link" id="id-tab" data-bs-toggle="tab" data-bs-target="#id-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"> <span style="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Formato 13">Informes de Desempeño</span></button>
 	</li>
   <li class="nav-item" role="presentation">
-		<button class="nav-link" id="mr-tab" data-bs-toggle="tab" data-bs-target="#mr-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Mediano plazo</button>
+		<button class="nav-link" id="mr-tab" data-bs-toggle="tab" data-bs-target="#mr-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"> <span style="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Formato 14 y Formato 15">Mediano plazo</span> </button>
 	</li>
    <li class="nav-item" role="presentation">
-		<button class="nav-link" id="presu-tab" data-bs-toggle="tab" data-bs-target="#presu-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Presupuesto</button>
+		<button class="nav-link" id="presu-tab" data-bs-toggle="tab" data-bs-target="#presu-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><span style="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Formato 16">Presupuesto</span></button>
 	</li>
   <li class="nav-item" role="presentation">
-		<button class="nav-link" id="ff-tab" data-bs-toggle="tab" data-bs-target="#ff-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Fuentes de Finaciamiento</button>
+		<button class="nav-link" id="ff-tab" data-bs-toggle="tab" data-bs-target="#ff-home" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false"><span style="cursor: context-menu !important;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Formato 17">Fuentes de Finaciamiento</span></button>
 	</li>
 </ul>
 
@@ -590,6 +590,7 @@ const appStateAct ={
     <b style="font-size: 25px !important;"> Formato 5: Identificación y cuantificación de la población objetivo </b><br><br>
 		<form method="POST" id="formato-5"> 
       {% csrf_token %}
+      <div style="overflow-x: auto; width: 100%;">
         <table class="my-table table tabla-bordes-punteados">
           <thead>
             <tr>
@@ -650,6 +651,7 @@ const appStateAct ={
             </tr> 
           </tbody>
         </table>
+        </div>
       <div>
         <button type="button" class="btn btn-warning" id="guardar_poblacion_objetivo" name="guardar_poblacion_objetivo" style="margin-top: 2rem;">Guardar formato 5</button>
       </div>
@@ -1150,6 +1152,7 @@ const appStateAct ={
       <span>Para visualizar la última versión, actualice su navegador!</span>
     </div>
   <div>
+    <div  style="overflow-x: auto; width: 100%;">
     <table class="my-table table tabla-bordes-punteados" id="tabla-formato-12">
       <thead>
         <tr>
@@ -1178,6 +1181,7 @@ const appStateAct ={
         {% endfor %}
       </tbody>
     </table>
+    </div>
     <div>
       <button type="button" class="btn btn-warning" name="guardar_formato_doce" id ="guardar_formato_doce" style="margin-bottom: 2rem;">Guardar formato 12</button>
     </div>
@@ -1240,6 +1244,7 @@ const appStateAct ={
     <div class="warning-box">
       <span>Para visualizar la última versión, actualice su navegador!</span>
     </div>
+    <div style="overflow-x: auto; width: 100%;">
     <table class="my-table table tabla-bordes-punteados tablatipouno" id="tabla-formato-14">
         <thead>
             <tr>
@@ -1274,6 +1279,7 @@ const appStateAct ={
             {% endfor %}
         </tbody>
     </table>
+    </div>
     <div>
       <button type="button" class="btn btn-warning" name="guardar_formato_catorce" id ="guardar_formato_catorce" style="margin-bottom: 2rem;">Guardar formato 14</button>
     </div>
@@ -1565,7 +1571,7 @@ const appStateAct ={
         <tbody>
           <tr>
             <td>
-              <select class="form-select" id="ff-select" name="ff-select">
+              <select class="form-select ff-select" id="ff-select" name="ff-select">
                   {% for fuente in ff %}
                     <option value="{{ fuente.id_ff }}">
                       {{ fuente.numero }} - {{ fuente.nombre }}
@@ -1600,6 +1606,11 @@ const appStateAct ={
 <script src="{% static 'js/scriptsnoprioritarios.js' %}"></script>
 <script src="{% static 'js/arboles.js' %}"></script>
 <script src="{% static 'js/format.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'js/scriptdos.js' %}"></script>
+<script src="{% static 'js/mir.js' %}"></script>
+<script src="{% static 'js/fichacomponente.js' %}"></script>
+<script src="{% static 'js/fichaactividad.js' %}"></script>
 <!--SCRIPTS DEL TEMPLATE-->
 <script src="{% static 'js/vendor.min.js' %}"></script>
 <script src="{% static 'libs/bootstrap.bundle.min.js' %}"></script>
@@ -1614,4 +1625,21 @@ const appStateAct ={
 
  <script src="{% static 'js/jquery.validate.min.js' %}"></script>
  <script src="{% static 'js/form-wizard.js' %}"></script>
+{% endblock %}
+
+{% block scripts %}
+<!-- <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const selectElement = document.querySelector('.ff-select');
+    if (selectElement) {
+      const choices = new Choices(selectElement, {
+        searchEnabled: true,
+        placeholderValue: 'Selecciona una fuente',
+        shouldSort: false,
+        removeItemButton: false,
+        allowHTML: false
+      });
+    }
+  });
+</script> -->
 {% endblock %}

@@ -45,7 +45,6 @@ table#example th {
     color: white;   
     }
 
-
 /*REGISTER*/
   
 .mega-conteniener{
@@ -210,32 +209,6 @@ table.my-table tr td input:focus {
 }
 
 
-/*Diagrama*/
-#problema-diagram {
-    transform-origin: 0 0;
-  }
-  .zoom-controls {
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    display: flex;
-    gap: 5px;
-    margin-top: 1rem;
-    margin-bottom: 0.2rem;
-  }
-  
-  .zoom-controls button {
-    width: 30px;
-    height: 30px;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-#reset-zoom{
-    padding-right: 3rem;
-}
 
 /* MIR */
 .change-value{
@@ -529,33 +502,6 @@ table.my-table tr td input:focus {
 }
 
 /*HOVER FORMATO 6*/
-.tooltip {
-  position: relative;
-  display: inline-block;
-  cursor: help;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 250px;
-  background-color: #ffc107;
-  color: black;
-  text-align: center;
-  border-radius: 6px;
-  padding: 6px;
-  position: absolute;
-  z-index: 1;
-  bottom: -130%; /* debajo del texto */
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
 
 /* TABLAS FORMATOS NUEVOS*/
 /* FORMATO 12*/

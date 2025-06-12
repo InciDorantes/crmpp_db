@@ -159,14 +159,39 @@ def home(request):
 
         # Validaciones de unicidad
         if programas_p.objects.filter(nombre_pp=nombre_pp).exists():
-            messages.error(request, "El nombre de pp ya existe")
+            messages.error(request, "El nombre de pp ya existe! no se puede guardar")
+            
+            # Construir programas_data con el flag es_editor
+            programas_data = []
+            for pp in lista_pps:
+                es_editor = permisos_pps.objects.filter(
+                    id_pp=pp,
+                    users=request.user,
+                    editor=True
+                ).exists()
+                programas_data.append({
+                    'pp': pp,
+                    'es_editor': es_editor
+                })
+
+            perfil = request.user.userprofile
+            clasificacion = perfil.clasificacion
+            if tipo_usuario == "superuser":
+                user_profiles = UserProfile.objects.all()
+            else:
+                user_profiles = UserProfile.objects.filter(clasificacion=clasificacion)
+
             return render(request, 'home.html', {
                 'is_authenticated': True,
                 'nombre_pp': nombre_pp,
                 'num_pp': num_pp,
+                'usuarios_seleccionados': usuarios_ids,
                 'usuarios': User.objects.all(),
-                'lista_pps': lista_pps,
+                'user_profiles': user_profiles,
+                'programas_data': programas_data,
+                'tipo_usuario': tipo_usuario,
             })
+        
         if num_pp != 0 and programas_p.objects.filter(num_pp=num_pp).exists():
             messages.error(request, "El número de pp ya existe")
             return render(request, 'home.html', {
@@ -226,6 +251,7 @@ def home(request):
             messages.error(request, "Datos inválidos.")
 
         return redirect('home')
+    
     # 3) Recuperar datos de sesión tras redirect
     nombre_pp = request.session.pop('nombre_pp', None)
     num_pp = request.session.pop('num_pp', None)

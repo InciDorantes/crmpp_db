@@ -1,3 +1,5 @@
+/* Aqui estan formato 7, estructura del Formato 10, y Estructura y carga de datos de las fichas*/
+
 /*ALINEACION AL PLAN ESTATAL DE DESARROLLO*/
 let cardCount = 1; // Empieza desde 1 porque ya existe una card con id ped-1
 document.addEventListener('DOMContentLoaded', function() {
@@ -391,9 +393,6 @@ function estructuraAPED() {
     return {data: datos};
 }
 
-//rellenar datos
-
-
 
 /* MATRIZ DE INDICADORES */
 function formatearFecha(fechaStr) {
@@ -687,7 +686,7 @@ function cargarFichaFin (){
             });
 
             // Totales LBVR (sin valores sugeridos)
-            setValue('resultado_formula_lvbr', ficha.lbvr.resultado_formula_lvbr, true);
+            setValue('resultado_formula_lvbr', total_lbvr, true);
             setValue('fin_result_um_lbvr', ficha.lbvr.fin_result_um_lbvr);
             setValue('fin_result_date_lbvr', ficha.lbvr.fin_result_date_lbvr);
         }
@@ -709,7 +708,7 @@ function cargarFichaFin (){
             });
 
             // Totales Meta (sin valores sugeridos)
-            setValue('resultado_formula_meta', ficha.meta.resultado_formula_meta, true);
+            setValue('resultado_formula_meta', total_meta, true);
             setValue('fin_result_um_meta', ficha.meta.fin_result_um_meta);
             setValue('fin_result_date_meta', ficha.meta.fin_result_date_meta);
         }
@@ -1053,7 +1052,6 @@ function fichasActividad() {
                 // Variables
                 actividad.datos.vars[`name_${letra}_${prefix}`] = 
                     document.getElementById(`name_${letra}_${prefix}`)?.value || '';
-                    console.log(document.getElementById(`name_${letra}_${prefix}`))
                 actividad.datos.vars[`mv_${letra}_${prefix}`] = 
                     document.getElementById(`mv_${letra}_${prefix}`)?.value || '';
 

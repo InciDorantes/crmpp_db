@@ -770,7 +770,6 @@ function formula_meta() {
 const meta = document.getElementById('fin_meta');
 
 function actualizarResultadoMeta() {
-    const resultado = formula_meta();
     document.getElementById('resultado_formula_meta').textContent = isNaN(resultado) ? '0' : resultado.toFixed(2);
 }
 

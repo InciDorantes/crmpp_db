@@ -1,3 +1,4 @@
+/* Aqui estan formato 1,2,3,4,6,9,12,13,14,15,16 y 17*/
 //OTROS 
 function mostrarOtroTipo(select) {
   // Obtiene “tipo_formato2_X”
@@ -1214,6 +1215,7 @@ function llenarFilaExtra(clave, datos, index) {
 
 
 /* FORMATO 17 */
+
 document.getElementById("boton-f17").addEventListener("click", agregarFilaFormato17);
 
 function agregarFilaFormato17() {
@@ -1235,7 +1237,8 @@ function agregarFilaFormato17() {
     })
 
     tabla.appendChild(nuevaFila);
-;
+
+
 };
 
 function eliminarFilaF17(event){

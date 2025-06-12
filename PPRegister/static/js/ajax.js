@@ -261,7 +261,6 @@ async function guardarMIR() {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         btn.disabled = true;
 
-        // 1. Generar datos del árbol
         const fin= obtenerEstructuraFin();
         const proposito = obtenerEstructuraProposito();
         const componente = generarEstructuraCompleta();
@@ -290,6 +289,9 @@ async function guardarMIR() {
         const result = await response.json();
         // 6. Mostrar resultado
         mirGuardada = true; 
+
+        await guardarFichasSilencioso();
+
         alert(result.message || 'MIR guardada correctamente');
         
 
@@ -614,6 +616,138 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+/* GUARDADOS SILENCIOSOS */
+/* Versión silenciosa para guardar ficha Fin */
+async function guardarFichaFinSilenciosa() {
+    const FichaFin = ffin();
+
+    const payload = {
+        action: 'guardar_ficha_fin',
+        ...FichaFin,
+        id_pp: window.location.pathname.split('/')[2]
+    };
+
+    const response = await fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error servidor ficha fin: ${response.status} - ${text}`);
+    }
+
+    return await response.json();
+}
+
+/* Versión silenciosa para guardar ficha Propósito */
+async function guardarFichaPropositoSilenciosa() {
+    const FichaProposito = fichaProposito();
+
+    const payload = {
+        action: 'guardar_ficha_proposito',
+        ...FichaProposito,
+        id_pp: window.location.pathname.split('/')[2]
+    };
+
+    const response = await fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error servidor ficha propósito: ${response.status} - ${text}`);
+    }
+
+    return await response.json();
+}
+
+/* Versión silenciosa para guardar ficha Componente */
+async function guardarFichaComponenteSilenciosa() {
+    const FichaComp = fichaComponente();
+
+    const payload = {
+        action: 'guardar_ficha_componente',
+        ...FichaComp,
+        id_pp: window.location.pathname.split('/')[2]
+    };
+
+    const response = await fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error servidor ficha componente: ${response.status} - ${text}`);
+    }
+
+    return await response.json();
+}
+
+/* Versión silenciosa para guardar ficha Actividad */
+async function guardarFichaActividadSilenciosa() {
+    const FichaAct = fichasActividad();
+
+    const payload = {
+        action: 'guardar_ficha_actividad',
+        ...FichaAct,
+        id_pp: window.location.pathname.split('/')[2]
+    };
+
+    const response = await fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error servidor ficha actividad: ${response.status} - ${text}`);
+    }
+
+    return await response.json();
+}
+async function guardarFichasSilencioso() {
+    // Guarda todas las fichas sin alertas ni confirmaciones
+    try {
+        // Las funciones guardarFichaXX actuales usan alert y confirm.
+        // Crea versiones "silenciosas" que no muestren alert ni modifiquen botones,
+        // por ejemplo: guardarFichaFinSilencioso, guardarFichaPropositoSilencioso, etc.
+
+        await Promise.all([
+            guardarFichaFinSilenciosa(),
+            guardarFichaPropositoSilenciosa(),
+            guardarFichaComponenteSilenciosa(),
+            guardarFichaActividadSilenciosa()
+        ]);
+        console.log('Fichas guardadas silenciosamente');
+
+    } catch (error) {
+        console.error('Error guardando fichas silenciosamente:', error);
+        // Aquí podrías decidir si quieres informar algo al usuario o no
+    }
+}
 /* GUARDAR FORMATO 1 */
 async function guardarFormatoUno() {
     //Empieza función de guardado de datos

@@ -4,10 +4,11 @@
 {% csrf_token %}
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="{% static 'js/scripthome.js' %}"></script>
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
-        <li>{{ message }}</li>
+        <li> <strong>{{ message }}</strong></li>
     {% endfor %}
 </ul>
 {% endif %}
@@ -30,9 +31,8 @@
       <h2>Nombre del Programa Presupuestario:</h2> 
       <input id="pp" type="text" name="nombre_pp">
     </div>
-    <p>Centros de costos disponibles: {{ user_profiles|length }}</p>
     <div class="permisos" style="margin-bottom: 1rem;">
-    <h5>Seleccione a los centros de costos relacionados con el PP</h5> 
+    <h5>Seleccione a los centros de costos participantes en el PP</h5> 
     <select id="usuarios" name="usuarios" multiple="multiple" style="width: 300px;">
       {% for profile in user_profiles %}
         <option value="{{ profile.user.id }}">
